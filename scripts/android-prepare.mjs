@@ -1,4 +1,4 @@
-// Runs after `npx cap add android`: sets the version number, makes the launcher icons from icon.svg,
+// Runs after `npx cap add android`: sets the version number, makes the launcher icons from assets/icon.svg,
 // and (later) any manifest changes. Every step reports what it did, and warns instead of failing
 // if the generated project looks different from what is expected.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -19,14 +19,15 @@ const code = (maj * 10000 + min * 100 + pat) * 1000 + Math.min(parseInt(process.
   console.log(`version ${version}, versionCode ${code}`);
 }
 
-// ---- launcher icons, drawn from icon.svg ----
+// ---- launcher icons, drawn from assets/icon.svg ----
 const { default: sharp } = await import('sharp');
-const svg = readFileSync('icon.svg', 'utf8');
+const svg = readFileSync('assets/icon.svg', 'utf8');
 const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
 const defs = (inner.match(/<defs>[\s\S]*?<\/defs>/) || [''])[0];
-const art = inner.replace(defs, '').replace(/<rect[^>]*\/>/g, '');
+const art = inner.replace(defs, '').replace(/<rect[^>]*\/>/g, '').replace('<g clip-path="url(#corners)">', '<g>');   // no rounded-square clip, so the glow is not cut off
 const wrap = body => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${body}</svg>`;
 const foreground = wrap(defs + `<g transform="translate(97.28 97.28) scale(0.62)">${art}</g>`);
+const maskable = wrap(defs + '<rect width="512" height="512" fill="#0a1222"/><g transform="translate(51.2 51.2) scale(0.8)">' + art + '</g>');   // the logo at 80% on a full background, for the round legacy icon
 const DENSITY = { mdpi: 1, hdpi: 1.5, xhdpi: 2, xxhdpi: 3, xxxhdpi: 4 };
 const roundMask = n => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${n}" height="${n}"><circle cx="${n / 2}" cy="${n / 2}" r="${n / 2}"/></svg>`);
 for (const [d, k] of Object.entries(DENSITY)) {
@@ -34,7 +35,8 @@ for (const [d, k] of Object.entries(DENSITY)) {
   const px = Math.round(48 * k), big = Math.round(108 * k);
   const square = await sharp(Buffer.from(svg), { density: 384 }).resize(px, px).png().toBuffer();
   await sharp(square).toFile(`${dir}/ic_launcher.png`);
-  await sharp(square).composite([{ input: roundMask(px), blend: 'dest-in' }]).png().toFile(`${dir}/ic_launcher_round.png`);
+  const roundSq = await sharp(Buffer.from(maskable), { density: 384 }).resize(px, px).png().toBuffer();
+  await sharp(roundSq).composite([{ input: roundMask(px), blend: 'dest-in' }]).png().toFile(`${dir}/ic_launcher_round.png`);
   await sharp(Buffer.from(foreground), { density: 384 }).resize(big, big).png().toFile(`${dir}/ic_launcher_foreground.png`);
 }
 mkdirSync(`${APP}/res/mipmap-anydpi-v26`, { recursive: true });
@@ -42,7 +44,7 @@ mkdirSync(`${APP}/res/values`, { recursive: true });
 const adaptive = '<?xml version="1.0" encoding="utf-8"?>\n<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n    <background android:drawable="@color/ic_launcher_background"/>\n    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>\n</adaptive-icon>\n';
 writeFileSync(`${APP}/res/mipmap-anydpi-v26/ic_launcher.xml`, adaptive);
 writeFileSync(`${APP}/res/mipmap-anydpi-v26/ic_launcher_round.xml`, adaptive);
-writeFileSync(`${APP}/res/values/ic_launcher_background.xml`, '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#0A1226</color>\n</resources>\n');
+writeFileSync(`${APP}/res/values/ic_launcher_background.xml`, '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#0A1222</color>\n</resources>\n');
 console.log('launcher icons written');
 
 // ---- plain launch screen ----
@@ -57,8 +59,8 @@ console.log('launcher icons written');
     const mm = re.exec(x);
     if (!mm) warn('launch theme looks different from expected, so the Android launch screen stays as it is');
     else if (!/windowSplashScreenBackground/.test(mm[2])) {
-      const inner = mm[2].replace(/<item\s+name="android:background">[^<]*<\/item>/, '<item name="android:background">#0A1226</item>');
-      x = x.replace(re, `${mm[1]}\n        <item name="windowSplashScreenBackground">#0A1226</item>\n        <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>${inner}${mm[3]}`);
+      const inner = mm[2].replace(/<item\s+name="android:background">[^<]*<\/item>/, '<item name="android:background">#0A1222</item>');
+      x = x.replace(re, `${mm[1]}\n        <item name="windowSplashScreenBackground">#0A1222</item>\n        <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>${inner}${mm[3]}`);
       writeFileSync(f, x); console.log('plain launch screen set');
     }
   }
@@ -200,7 +202,7 @@ public class MainActivity extends BridgeActivity {
 
 // ---- small icon for reminder notifications: Android wants a white shape on a transparent background ----
 {
-  const glyph = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#fff" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const glyph = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><mask id="k" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512"><rect width="512" height="512" fill="#fff"/><path fill="#000" transform="translate(256 256) scale(0.3548 -0.3548) translate(-508.0 -355.5)" d="M283 530C333 513 394 491 454 468H43V330H431V61C431 46 425 43 405 42C385 42 307 42 253 45C274 7 298 -54 306 -95C391 -95 460 -93 513 -73C567 -53 583 -16 583 56V330H755C736 292 716 255 697 227L822 155C876 227 934 330 973 427L853 478L828 468H695L724 515L652 542C730 597 806 663 867 723L763 806L730 798H142V665H590C561 640 528 615 497 595L355 640Z"/></mask></defs><circle cx="256" cy="256" r="248" fill="#fff" mask="url(#k)"/></svg>`;   // the 予 disc, cut out of a solid white circle
   for (const [d, k] of Object.entries(DENSITY)) {
     const dir = `${APP}/res/drawable-${d}`; mkdirSync(dir, { recursive: true });
     const px = Math.round(24 * k);
