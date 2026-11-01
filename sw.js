@@ -1,5 +1,5 @@
-const CACHE = 'yotei-v3-1-3';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png', './icon-maskable-512.png', './icon.svg', './styles.css', './main.js', './util.js', './icons.js', './about.js', './templates.js', './science.js', './engine.js', './validate.js', './storage.js', './dates.js', './migrate.js', './tasks.js', './review.js'];
+const CACHE = 'yotei-v4-0-2';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './assets/icon-192.png', './assets/icon-512.png', './assets/icon-180.png', './assets/icon-maskable-512.png', './assets/icon.svg', './assets/favicon.svg', './assets/favicon-32.png', './src/styles.css', './src/js/main.js', './src/js/wave.js', './src/js/setupplan.js', './src/js/edui.js', './src/js/history.js', './src/js/util.js', './src/js/icons.js', './src/js/about.js', './src/js/templates.js', './src/js/science.js', './src/js/engine.js', './src/js/rhythm.js', './src/js/validate.js', './src/js/storage.js', './src/js/dates.js', './src/js/migrate.js', './src/js/tasks.js', './src/js/inbox.js', './src/js/todo.js', ];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)

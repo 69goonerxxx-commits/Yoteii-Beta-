@@ -1,6 +1,49 @@
-# Yotei v3.0.4 (3.0.0 notes below)
+# Yotei v4.0.0 (3.0.0 notes below)
+
+Everything after 3.1.3 (the former 3.2.0, 3.2.1 and 3.2.2) is now part of 4.0.0.
 
 Released as 3.0.0 (Oct 2026). The user-facing version of this list is the 3.0.0 entry in `about.js`.
+
+## 4.0.0 · Inbox
+- New `src/js/inbox.js` (plain functions, tested in `tests/mjs/inbox.test.mjs`): task shape `{ id, t, note?, imp?, at? }`, `stampOf` (old tasks have no `at`, so the time inside the id is used), `addedLabel`, `sortList`/`groups` (Important first, then the chosen sort inside each group), `stats`, `applyOrder` (a drag), `makeTask`, `insertNew` (new tasks go on top), `normalizePrefs`. Added to the `sw.js` SHELL.
+- New store key `inboxPrefs` = `{ f:'all'|'imp', s:'manual'|'new'|'old'|'az' }` (filter and sort). `validate.js` accepts it and the new task fields (`note` string, `imp` boolean, `at` number).
+- main.js: `drawInbox` rewritten (stats, filter, sort, Important/Later sections, empty state). Rows use `.ib*` classes; the container is `#inboxCard.ibx` (the old `.inbox` class is gone from it). A single tap on a row does nothing; two taps within 380 ms open the sheet (a hidden Edit button per row covers keyboard and screen readers). Holding a row for 380 ms picks it up (`touchmove` is cancelled while dragging); a drag only reorders inside its own section and sets the sort to Manual.
+- Capture bar: `#inCap` (`#inCapT`, `#inCapF`, `#inCapGo`) is fixed above the tab bar and moves to the bottom when `body.kb` is set. The round + button is hidden on the Inbox tab (`styles.css`).
+- `#qaDlg` is now a bottom sheet for both add and edit (`#qa_t`, `#qa_note`, `#qa_imp`, `#qa_sch`, `#qa_del`, `.isEdit` shows Schedule and Delete). `openInboxComposer()` (the + menu and the home-screen shortcut) opens it empty and stays on the current tab.
+- The Inbox tab has a count badge `#inBadge`. Colour token `--imp` is the red used for the flag.
+- To-do to Inbox and timeline to Inbox now keep the note (to-do note, or the block's details). Schedule from the Inbox puts the note into the task's details.
+- Old Inbox CSS (`.inCards`, `.inCard`, `.inMain`, `.inT`, `.inGo`, `.inRm`, the old `#qaDlg` rules) is removed. The shared `.inEmpty`, `.inNew` and `.inbox` rules are kept because the To-do tab still uses them.
+- Version 4.0.0 in `about.js` and `package.json`, `sw.js` cache `yotei-v4-0-0`. The one 4.0.0 entry in `about.js` also holds the former 3.2.0 to 3.2.2 notes.
+
+## 4.0.0 · To-do tab
+- New `src/js/todo.js` (plain functions, tests in `tests/mjs/todo.test.mjs`): `isOverdue`, `overdueCount`, `quickDate`, `weekDays`, `monthGrid`, `shiftMonth`, `addDays`. Listed in `sw.js` SHELL.
+- `drawTodo` rebuilt. Header buttons live in `#tdHdr` (inside `.hdrR`, shown on the To-do tab only): `#tdHash` toggles the tag row, `data-vm` switches list or calendar. Smart chips (counts hidden at zero), then list chips with a dot and the + chip. No smart chips in calendar mode.
+- Composer `#tdCap` reuses `.ibCap`. State is the view's defaults (`tdCapDef`: Today, Tomorrow, starred, or the calendar day) plus what the person changed (`tdCapOv`, reset when the view changes). It adds `{ l, due, dt, rep, star, tags }`. The round + (`#fab`) now shows on Home only; the + menu's "Add a to-do" still opens the editor.
+- Tab badge `#tdBadge` (overdue count, `--bad`), refreshed in `drawTodo` and every 20 s.
+- Date picker `#dpDlg` (`openDatePick(value, callback)`): used by the editor Date row, a card's date pill (`data-dp`) and the composer. Picking a time or repeat with no date sets the date to today; No date clears time and repeat.
+- Editor `#tdeDlg` is a 90% sheet. All old ids are kept (`tde_t`, `tde_d` (now hidden), `tde_tm`, `tde_rep`, `tde_list`, `tde_tags`, `tde_color`, `tde_icon`, `tde_steps`, ...). `tdeSync` fills the grey summaries. Subtasks get a tick button (`.sdC`, only visible inside `#tdeDlg`); `makeSteps` takes an optional count formatter.
+- `todoPrefs` gains `calWeek` (calendar shows one week). `validate.js` already accepts extra keys.
+- Empty states: first use, filtered (Today, Upcoming, Starred), empty list, tag filter with no match, and the All caught up card. Old `.inEmpty`, `.inNew` and related CSS are removed.
+- Polish: the empty-list art is the outline list icon in the list colour; a gradient (`#tab-todo::after`) fades cards under the composer; the editor's subtasks have a drag handle again (right side, before the remove button); the card drag handle sits beside the star so cards stay one row tall. Every open to-do has the handle now; dropping in a date-sorted group sets `todoPrefs.sort` to `mine` and shows a toast.
+
+## 4.0.0 · Welcome tour (was 3.2.2)
+- Welcome tour (#welDlg) goes from 5 to 8 pages: logo, wake time, **Routines and Run mode** (new), Home/School/Away, running late, Inbox/To-do, **Streaks and History** (new), **Let's set up your day** (new; carries the Structured credit). The logo page uses the new logo; its six orbs pop in with `.wlOrb` and `@keyframes wlPop`.
+- New ids: `#wl_back` (Back button, hidden on page 1), `#wl_m1`..`#wl_m3` (sample cards the mode demo rewrites). The dots now carry `data-k` and are tappable (the hit area grows with `::after`); Left/Right arrow keys move between pages.
+- Tapping Home, School or Away in the tour calls `welMode()` in main.js, which swaps the three sample task counts (`WEL_MODES`). `openWelcome` resets it to Home.
+- Tour mini-screens use `var(--accent)` for checks, selected tabs, chips, buttons, the streak number and chart bars. Headlines and text use `text-wrap:balance`.
+- Shipped as part of 4.0.0 (the 3.2.2 label was folded into 4.0.0).
+
+## 4.0.0 · New logo (was 3.2.1)
+- New logo. `assets/icon.svg` is the master (rounded square); `icon-192/512.png` come from it, `icon-180.png` and `icon-maskable-512.png` are full-bleed squares (the maskable one has the art at 80%). `assets/favicon.svg` and `favicon-32.png` are the small 予 mark (the SVG switches the kanji to white in a light browser theme).
+- Loading screen: the full logo with the six orbs rippling (each orb sits on a solid navy circle so the ring never shows through while it fades), and the name as an outlined path (Sora SemiBold) so no font has to load first. The "Tap to skip" hint and its CSS are gone; `__bootSkip` and the `ready` class are untouched, so tapping still skips after 1.2s.
+- Navy is now #0a1222 everywhere (loading screen, manifest, Android adaptive background and launch screen).
+- `scripts/android-prepare.mjs`: the adaptive foreground drops the rounded-square clip so the orb's glow is not cut off; `ic_launcher_round.png` is built from the art at 80% on a full background so the orb is not cropped; the reminder icon is the 予 disc instead of the clock.
+- `sw.js` caches the two favicon files and the cache name is now `yotei-v4-0-0`. The welcome tour now uses the new logo too (orbs pop in one by one on the first page).
+
+## 4.0.0 · Repository restructure (was 3.2.0)
+- Repository restructure, no behaviour change. `src/js/` holds the modules, `src/styles.css` the styles, `assets/` the icons, `scripts/` the build scripts (`build-www.mjs`, `android-prepare.mjs`) and `tests/mjs/` and `tests/py/` the tests. `index.html`, `sw.js` and `manifest.webmanifest` stay in the root so the service worker keeps whole-app scope.
+- `scripts/build-www.mjs` now copies `index.html`, the manifest, `sw.js`, `src/` and `assets/` (the same set `pages.yml` publishes) and checks that every import and referenced file exists.
+- `sw.js` SHELL, the manifest icons, the notification icons, the startup error box file list, the test imports and the workflows point at the new paths.
 
 ## 3.1.3
 - Loading screen: #boot has an onclick (__bootSkip) that only works once main.js has set __bootReady and 1.2s have passed since __t0; a "Tap to skip" hint fades in at the same moment.

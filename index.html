@@ -3,29 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Yotei</title>
+<title>Yoteii</title>
 <meta name="theme-color" content="#1c1c1e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Yotei">
+<meta name="apple-mobile-web-app-title" content="Yoteii">
 <link rel="manifest" href="./manifest.webmanifest">
 <style>
-/* Loading screen: the five dots from the app icon, rippling */
-#boot{position:fixed;inset:0;z-index:2147483000;background:#0a1226;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease}
+/* Loading screen: the Yoteii logo, its orbs rippling, and the name underneath */
+#boot{position:fixed;inset:0;z-index:2147483000;background:#0a1222;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease}
 #boot.out{opacity:0;pointer-events:none}
-#boot .skip{position:absolute;left:0;right:0;bottom:calc(36px + env(safe-area-inset-bottom,0px));text-align:center;font:500 13px 'Poppins',system-ui,sans-serif;color:#9fb0d0;opacity:0;transition:opacity .5s ease;margin:0}
-#boot.ready .skip{opacity:.85}
-#boot svg{width:min(62vw,260px);height:auto;overflow:visible}
-#boot .bd{transform-box:fill-box;transform-origin:center;animation:bootDot 1.3s ease-in-out infinite}
-#boot .d2{animation-delay:.14s}#boot .d3{animation-delay:.28s}#boot .d4{animation-delay:.42s}#boot .d5{animation-delay:.56s}
-@keyframes bootDot{0%,70%,100%{transform:scale(1);opacity:.45}35%{transform:scale(1.45);opacity:1}}
-@media (prefers-reduced-motion:reduce){#boot .bd{animation:none;opacity:1}}
+#boot .bl{width:min(50vw,200px);height:auto;overflow:visible}
+#boot .bw{display:block;height:auto;margin-top:12px}
+#boot .bs{transform-box:fill-box;transform-origin:center;animation:bootPulse 1.3s ease-in-out infinite}
+#boot .bf{animation:bootFade 1.3s ease-in-out infinite;opacity:.5}
+#boot .bgl{animation:bootGlow 1.3s ease-in-out .7s infinite;opacity:.5}
+@keyframes bootPulse{0%,70%,100%{transform:scale(1)}35%{transform:scale(var(--s))}}
+@keyframes bootFade{0%,70%,100%{opacity:.5}35%{opacity:1}}
+@keyframes bootGlow{0%,70%,100%{opacity:.45}35%{opacity:1}}
+@media (prefers-reduced-motion:reduce){#boot .bs,#boot .bf,#boot .bgl{animation:none;opacity:1}}
 </style>
-<script>window.__t0=Date.now();window.__bootMin=0;window.__bootOff=function(now){var b=document.getElementById('boot');if(!b)return;var go=function(){b.classList.add('out');setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);var f=window.__afterBoot;window.__afterBoot=null;if(f)f()},400)};if(now)go();else setTimeout(go,Math.max(0,window.__bootMin-(Date.now()-window.__t0)))};setTimeout(function(){window.__bootOff(true)},9000);window.__bootSkip=function(){if(window.__bootReady&&Date.now()-window.__t0>=1200)window.__bootOff(true)};</script>
+<script>window.__t0=Date.now();window.__bootMin=0;window.__bootOff=function(now){var b=document.getElementById('boot');if(!b)return;var go=function(){var f=window.__afterBoot;window.__afterBoot=null;if(f)f();b.classList.add('out');setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},400)};if(now)go();else setTimeout(go,Math.max(0,window.__bootMin-(Date.now()-window.__t0)))};setTimeout(function(){window.__bootOff(true)},9000);window.__bootSkip=function(){if(window.__bootReady&&Date.now()-window.__t0>=1200)window.__bootOff(true)};</script>
 <script>
 /* Startup safety net: if a file fails to load or the app crashes, say so in plain words and let the person save their data. */
 (function(){
-  var errs = [], box, det, msg, FILES = ['main.js','util.js','validate.js','tasks.js','engine.js','dates.js','migrate.js','icons.js','templates.js','science.js','about.js','storage.js','styles.css'], checked = false;
+  var errs = [], box, det, msg, FILES = ['src/js/main.js','src/js/wave.js','src/js/edui.js','src/js/util.js','src/js/validate.js','src/js/tasks.js','src/js/engine.js','src/js/rhythm.js','src/js/dates.js','src/js/migrate.js','src/js/icons.js','src/js/templates.js','src/js/science.js','src/js/about.js','src/js/storage.js','src/js/history.js','src/styles.css'], checked = false;
   function el(t, css, txt){ var e = document.createElement(t); if (css) e.style.cssText = css; if (txt !== undefined) e.textContent = txt; return e; }
   function btn(txt, fn){
     var b = el('button', 'font:600 14px/1 system-ui,sans-serif;color:#fff;background:rgba(255,255,255,.16);border:0;border-radius:10px;padding:0 14px;min-height:42px', txt);
@@ -39,7 +41,7 @@
     x.setAttribute('aria-label', 'Dismiss'); x.style.cssText += ';position:absolute;top:6px;right:6px;min-height:36px;width:36px;padding:0;font-size:16px';
     box.appendChild(x);
     box.appendChild(el('div', 'font-weight:700;font-size:16px;margin:0 40px 4px 0', 'Something went wrong'));
-    box.appendChild(el('div', 'opacity:.9;margin-bottom:12px', 'Yotei hit a problem and may not work properly. Your data is safe on this device. Reloading usually fixes it.'));
+    box.appendChild(el('div', 'opacity:.9;margin-bottom:12px', 'Yoteii hit a problem and may not work properly. Your data is safe on this device. Reloading usually fixes it.'));
     var row = el('div', 'display:flex;flex-wrap:wrap;gap:8px');
     row.appendChild(btn('Export my data', exportNow));
     row.appendChild(btn('Reload', function(){ location.reload(); }));
@@ -97,12 +99,12 @@
       }
       if (P && P.Filesystem && P.Share){
         var w = await P.Filesystem.writeFile({ path:name, data:json, directory:'CACHE', encoding:'utf8' });
-        await P.Share.share({ title:'Yotei backup', url:w.uri, dialogTitle:'Save your Yotei backup' });
+        await P.Share.share({ title:'Yoteii backup', url:w.uri, dialogTitle:'Save your Yoteii backup' });
         say('Backup ready. Choose where to save it.'); return;
       }
       var f = new File([json], name, { type:'application/json' });
       if (navigator.canShare && navigator.canShare({ files:[f] })){
-        try{ await navigator.share({ files:[f], title:'Yotei backup' }); say('Backup shared.'); return; }
+        try{ await navigator.share({ files:[f], title:'Yoteii backup' }); say('Backup shared.'); return; }
         catch(e){ if (e && e.name === 'AbortError') return; }
       }
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([json], { type:'application/json' })); a.download = name;
@@ -126,34 +128,38 @@
 })();
 </script>
 <script>try{var D=document.documentElement,T=JSON.parse(localStorage.getItem('yotei_v2_theme')||'"dark"');if(T==='auto')T=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';D.dataset.theme=T;D.dataset.text=JSON.parse(localStorage.getItem('yotei_v2_text')||'"normal"')}catch(e){}</script>
-<link rel="icon" type="image/svg+xml" href="./icon.svg">
-<link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./styles.css">
+<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png">
+<link rel="apple-touch-icon" href="./assets/icon-180.png">
+<link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
-<div id="boot" role="status" aria-label="Loading Yotei" onclick="window.__bootSkip&&window.__bootSkip()"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="220" r="118" fill="none" stroke="#1d4ed8" stroke-width="16" opacity="0.6"/><circle cx="256" cy="220" r="118" fill="none" stroke="#60a5fa" stroke-width="3" opacity="0.4"/><polyline points="194,222 240,268 320,176" fill="none" stroke="#60a5fa" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><circle class="bd d1" cx="208" cy="396" r="7" fill="#1d4ed8"/><circle class="bd d2" cx="232" cy="396" r="7" fill="#1d4ed8"/><circle class="bd d3" cx="256" cy="396" r="7" fill="#3b82f6"/><circle class="bd d4" cx="280" cy="396" r="7" fill="#3b82f6"/><circle class="bd d5" cx="304" cy="396" r="7" fill="#60a5fa"/></svg><p class="skip">Tap to skip</p></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><radialGradient id="starG" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff7c2"/><stop offset=".3" stop-color="#fde047"/><stop offset=".7" stop-color="#facc15"/><stop offset="1" stop-color="#c58a06"/></radialGradient></defs></svg>
+
+<div id="boot" role="status" aria-label="Loading Yoteii" onclick="window.__bootSkip&&window.__bootSkip()"><svg class="bl" viewBox="62.5 69 360 340" aria-hidden="true"><defs><radialGradient id="bo1" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#9bbcff"/><stop offset="0.5" stop-color="#4f82f2"/><stop offset="1" stop-color="#3265da"/></radialGradient><radialGradient id="bo2" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#a6c8ff"/><stop offset="0.5" stop-color="#6aa4f8"/><stop offset="1" stop-color="#4684e6"/></radialGradient><radialGradient id="bo3" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#cde3fe"/><stop offset="0.5" stop-color="#8fbcfc"/><stop offset="1" stop-color="#689ef0"/></radialGradient><radialGradient id="bo4" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d9fb"/><stop offset="1" stop-color="#aab3ec"/></radialGradient><radialGradient id="bo5" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#fff3c4"/><stop offset="0.5" stop-color="#fdd870"/><stop offset="1" stop-color="#f0b445"/></radialGradient><radialGradient id="bo6" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#ffe784"/><stop offset="0.5" stop-color="#fbbe2c"/><stop offset="1" stop-color="#ee7c12"/></radialGradient><linearGradient id="bring" gradientUnits="userSpaceOnUse" x1="0" y1="92" x2="0" y2="390"><stop offset="0" stop-color="#78b0ff"/><stop offset="1" stop-color="#2f6aea"/></linearGradient><radialGradient id="bsg" cx="363" cy="130" r="101.19999999999999" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffb92e" stop-opacity="0.36"/><stop offset="1" stop-color="#ffb92e" stop-opacity="0"/></radialGradient><filter id="bsoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter><mask id="bgap" maskUnits="userSpaceOnUse" x="-600" y="-600" width="2000" height="2000"><rect x="-600" y="-600" width="2000" height="2000" fill="#fff"/><path d="M353.8 168.8A143.5 143.5 0 0 0 313.8 124.4" fill="none" stroke="#000" stroke-width="60" filter="url(#bsoft)"/></mask></defs><circle class="bgl" cx="363" cy="130" r="101.2" fill="url(#bsg)"/><g mask="url(#bgap)"><circle cx="229.5" cy="240.5" r="143.5" fill="none" stroke="url(#bring)" stroke-width="16"/></g><g stroke="#7fb4fb" stroke-width="8" stroke-linecap="round" fill="none"><path d="M338 240.5L358 240.5"/><path d="M229.5 132L229.5 112"/><path d="M121 240.5L101 240.5"/><path d="M229.5 349L229.5 369"/></g><g class="bs" style="--s:1.5;animation-delay:0.00s"><circle cx="175" cy="233" r="11" fill="#0a1222"/><circle class="bf" style="animation-delay:0.00s" cx="175" cy="233" r="11" fill="url(#bo1)"/></g><g class="bs" style="--s:1.45;animation-delay:0.14s"><circle cx="200" cy="262" r="14" fill="#0a1222"/><circle class="bf" style="animation-delay:0.14s" cx="200" cy="262" r="14" fill="url(#bo2)"/></g><g class="bs" style="--s:1.4;animation-delay:0.28s"><circle cx="230" cy="296" r="17" fill="#0a1222"/><circle class="bf" style="animation-delay:0.28s" cx="230" cy="296" r="17" fill="url(#bo3)"/></g><g class="bs" style="--s:1.35;animation-delay:0.42s"><circle cx="265" cy="252" r="21" fill="#0a1222"/><circle class="bf" style="animation-delay:0.42s" cx="265" cy="252" r="21" fill="url(#bo4)"/></g><g class="bs" style="--s:1.25;animation-delay:0.56s"><circle cx="306" cy="200" r="28" fill="#0a1222"/><circle class="bf" style="animation-delay:0.56s" cx="306" cy="200" r="28" fill="url(#bo5)"/></g><g class="bs" style="--s:1.15;animation-delay:0.70s"><circle cx="363" cy="130" r="44" fill="#0a1222"/><circle class="bf" style="animation-delay:0.70s" cx="363" cy="130" r="44" fill="url(#bo6)"/></g></svg><svg class="bw" viewBox="0 0 84.7 22.2" style="width:84.7px;overflow:visible" aria-hidden="true"><g transform="translate(-5.47 0)"><path fill="#e6edff" d="M6.72 13.48 1 1.75H4.8L9.16 10.93L8.33 10.67H10.8L9.92 10.93L13.9 1.75H17.48L12.21 13.48ZM7.66 20.73V12.91H11.27V20.73Z M30.25 21.23Q28.38 21.23 26.95 20.63Q25.52 20.03 24.53 19Q23.54 17.98 23.03 16.68Q22.53 15.38 22.53 13.97V13.43Q22.53 11.97 23.06 10.66Q23.59 9.35 24.59 8.32Q25.6 7.29 27.03 6.71Q28.46 6.12 30.25 6.12Q32.04 6.12 33.47 6.71Q34.9 7.29 35.9 8.32Q36.91 9.35 37.43 10.66Q37.95 11.97 37.95 13.43V13.97Q37.95 15.38 37.44 16.68Q36.93 17.98 35.94 19Q34.96 20.03 33.53 20.63Q32.1 21.23 30.25 21.23ZM30.25 18.13Q31.58 18.13 32.49 17.55Q33.4 16.96 33.86 15.96Q34.33 14.96 34.33 13.69Q34.33 12.39 33.85 11.39Q33.37 10.39 32.45 9.8Q31.52 9.22 30.25 9.22Q28.98 9.22 28.05 9.8Q27.13 10.39 26.64 11.39Q26.14 12.39 26.14 13.69Q26.14 14.96 26.62 15.96Q27.1 16.96 28.01 17.55Q28.92 18.13 30.25 18.13Z M50.89 20.92Q48.94 20.92 47.68 20.41Q46.42 19.9 45.8 18.69Q45.17 17.48 45.17 15.43L45.2 2.64H48.58L48.55 15.66Q48.55 16.7 49.11 17.26Q49.67 17.82 50.71 17.82H52.92V20.92ZM42.94 9.27V6.62H52.92V9.27Z M65.92 21.23Q64.1 21.23 62.74 20.6Q61.37 19.98 60.47 18.93Q59.58 17.87 59.12 16.57Q58.67 15.27 58.67 13.92V13.43Q58.67 12.02 59.12 10.71Q59.58 9.4 60.47 8.37Q61.37 7.34 62.7 6.73Q64.02 6.12 65.77 6.12Q68.05 6.12 69.6 7.12Q71.15 8.12 71.93 9.75Q72.71 11.37 72.71 13.25V14.55H60.2V12.34H70.45L69.33 13.43Q69.33 12.08 68.94 11.11Q68.55 10.15 67.75 9.63Q66.96 9.11 65.77 9.11Q64.57 9.11 63.74 9.66Q62.91 10.2 62.48 11.23Q62.05 12.26 62.05 13.69Q62.05 15.01 62.46 16.04Q62.88 17.07 63.74 17.65Q64.6 18.24 65.92 18.24Q67.25 18.24 68.08 17.7Q68.91 17.17 69.15 16.39H72.47Q72.16 17.85 71.28 18.94Q70.39 20.03 69.03 20.63Q67.66 21.23 65.92 21.23Z M80.04 20.73V6.62H83.65V20.73ZM78.06 9.32V6.62H83.65V9.32ZM81.37 4.93Q80.3 4.93 79.79 4.37Q79.29 3.81 79.29 2.95Q79.29 2.09 79.79 1.55Q80.3 1 81.37 1Q82.43 1 82.93 1.55Q83.42 2.09 83.42 2.95Q83.42 3.81 82.93 4.37Q82.43 4.93 81.37 4.93Z"/><path fill="#e6edff" transform="translate(10.94 0)" d="M80.04 20.73V6.62H83.65V20.73ZM78.06 9.32V6.62H83.65V9.32ZM81.37 4.93Q80.3 4.93 79.79 4.37Q79.29 3.81 79.29 2.95Q79.29 2.09 79.79 1.55Q80.3 1 81.37 1Q82.43 1 82.93 1.55Q83.42 2.09 83.42 2.95Q83.42 3.81 82.93 4.37Q82.43 4.93 81.37 4.93Z"/></g></svg></div>
 <div class="app">
-  <div class="top"><h1 id="hdrTitle">Yotei</h1><div class="hdrR"><div class="dateWrap hdrCal"><button class="date" id="dateBtn" aria-label="Pick a date"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button><input type="date" id="datePick" aria-label="Pick a date" tabindex="-1"></div></div><span id="date" class="srOnly"></span><span id="clk"></span><button id="editDone" type="button" aria-label="Done editing">Done</button><button id="settingsBtn" aria-label="Settings">⚙</button></div>
-  <section id="tab-inbox" class="tab" hidden></section>
-  <section id="tab-todo" class="tab" hidden><div class="qcard" id="todoCard"></div></section>
+  <div class="top"><h1 id="hdrTitle">Yoteii</h1><div class="hdrR"><button type="button" class="hdrToday" id="hdrToday" hidden>Today</button><div class="dateWrap hdrCal"><button class="date" id="dateBtn" aria-label="Pick a date"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></button></div><div id="tdHdr" class="tdHdr"></div></div><span id="date" class="srOnly"></span><span id="clk"></span><button id="editDone" type="button" aria-label="Done editing">Done</button><button id="settingsBtn" aria-label="Settings">⚙</button></div>
+  <section id="tab-inbox" class="tab" hidden><div class="ibCap" id="inCap"><input id="inCapT" maxlength="80" autocomplete="off" enterkeyhint="send" placeholder="Add a task" aria-label="Add a task"><button type="button" id="inCapF" class="ibCapF" aria-pressed="false" aria-label="Mark as important"></button><button type="button" id="inCapGo" class="ibCapGo" aria-label="Add to inbox" disabled></button></div></section>
+  <section id="tab-todo" class="tab" hidden><div class="qcard" id="todoCard"></div><div class="ibCap tdCap" id="tdCap"><input id="tdCapT" maxlength="80" autocomplete="off" enterkeyhint="send" placeholder="Add a to-do" aria-label="Add a to-do"><span class="tdCapCh" id="tdCapCh"></span><button type="button" id="tdCapD" class="tdCapB" aria-label="Set a due date"></button><button type="button" id="tdCapS" class="tdCapB" aria-pressed="false" aria-label="Star"></button><button type="button" id="tdCapGo" class="ibCapGo" aria-label="Add to-do" disabled></button></div></section>
   <section id="tab-home" class="tab">
     <div class="weekstrip" id="weekstrip"></div>
-    <button class="add" id="todayBtn" hidden>Back to today</button>
     <button class="add" id="liveBtn" hidden>Rebuild this day from my current routines</button>
     
     
     <div class="panel">
+    <button type="button" class="sum" id="sumBtn" aria-expanded="false" aria-controls="foldBox"></button>
+    <div class="fold closed" id="foldBox">
     <div class="wakerow">
-      <label for="wake">Wake time</label><input type="time" id="wake"><button id="reset">↺</button><button class="add" id="awayBtn" aria-pressed="false"></button>
+      <div class="wkL"><label for="wake">Wake time</label><input type="time" id="wake"></div><button id="reset"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>Reset</button><button class="add" id="awayBtn" aria-pressed="false"></button>
     </div>
-    <p class="msg" id="msg" role="status"></p>
-    <p class="prog" id="prog"></p>
-    <div id="nowBanner"><span class="nb-i" id="nb-i"></span><div><div class="nb-t" id="nb-t" aria-live="polite"></div><div class="nb-s" id="nb-s"></div></div></div>
+    <div class="stat"><p class="msg" id="msg" role="status"></p><p class="prog" id="prog"></p></div>
+    </div>
+    <div id="nowBanner"><span class="nb-i" id="nb-i"></span><div class="nb-x"><div class="nb-t" id="nb-t" aria-live="polite"></div><div class="nb-s" id="nb-s"></div></div><button type="button" class="nbDone" id="nbDone">Done</button><div class="nbBar" aria-hidden="true"><i id="nbBar"></i></div></div>
     <div id="tl"></div>
-    <div class="sleep">
-      <h2>Note for this day</h2>
-      <p class="wn" id="awayHint"></p>
-      <textarea id="dnote" rows="3" placeholder="Anything worth remembering about today"></textarea>
+    <div class="sleep noteCard">
+      <div class="cardHd"><span class="cardIc" id="noteIc"></span><div><h2>Note for this day</h2><p class="cardSub">Anything worth remembering about today.</p></div></div>
+      <textarea id="dnote" rows="3" placeholder="Write a note"></textarea>
+      <p class="awayNote" id="awayHint"></p>
     </div>
     </div>
   </section>
@@ -175,6 +181,11 @@
       <div id="sleep"></div>
     </div>
     <div class="sleep">
+      <h2>Leave time</h2>
+      <p class="wn" id="leaveWn">When you leave on your main day out. The morning routine shrinks to finish before it. With no time set, those days run like Home days.</p>
+      <div id="leaveBox"></div>
+    </div>
+    <div class="sleep">
       <h2>Science sources</h2>
       <p class="wn">Tap a block header on the timeline to read what is going on in that window. The research behind it is listed here.</p>
       <details class="srcDet"><summary>Show all sources</summary><ol id="srcList"></ol></details>
@@ -187,40 +198,46 @@
   </section>
 
   <nav class="tabs" role="tablist">
-    <button data-tab="inbox" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 13l2-8h12l2 8v6H4zM4 13h5l1 2h4l1-2h5"/></svg></span><span>Inbox</span></button>
-    <button data-tab="todo" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg></span><span>To-do</span></button>
+    <button data-tab="inbox" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 13l2-8h12l2 8v6H4zM4 13h5l1 2h4l1-2h5"/></svg><b class="ibBadge" id="inBadge" hidden></b></span><span>Inbox</span></button>
+    <button data-tab="todo" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg><b class="ibBadge tdBadge" id="tdBadge" hidden></b></span><span>To-do</span></button>
     <button data-tab="home" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg></span><span>Timeline</span></button>
     <button data-tab="history" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span>History</span></button>
     <button data-tab="settings" role="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span><span>Settings</span></button>
   </nav>
 </div>
 <button id="fab" aria-label="Add"></button>
-<dialog id="fabMenu"><div class="fabIn"></div></dialog>
-<dialog id="ed"><div class="ef">
-  <div class="edHead"><button type="button" id="e_x2" aria-label="Close">&#10005;</button><h2 id="e_title">Edit <em>Task</em></h2></div>
-  <label><span id="e_tlab">Task</span><div class="taskRow"><input id="e_t"><button type="button" id="e_iconBtn" class="iconPreview" aria-label="Choose icon">+</button><input type="hidden" id="e_icon"></div></label>
-  <label id="e_wrap" style="display:none">Window<select id="e_w"></select></label>
-  <label>What color?<div class="colorRow" id="e_colors" role="radiogroup" aria-label="Color"></div><input type="hidden" id="e_color"></label>
-  <label class="taskOnly">Kind<select id="e_k">
+<dialog id="fabMenu"><div class="fabSheet"><div class="qaGrab"></div><div class="fabTop"><span></span><b>Add</b><button type="button" id="fabX" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="fabIn"></div></div></dialog>
+<dialog id="ed" class="edSheet"><div class="edShell"><div class="qaGrab"></div>
+  <div class="qaTop edTop"><button type="button" id="e_x2" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2 id="e_title">New task</h2><button type="button" id="e_ok2" class="qaSv">Save</button></div>
+  <div class="ef" id="edScroll">
+    <p class="edErr" id="e_err" role="alert" hidden></p>
+    <label class="edName"><span id="e_tlab" class="srOnly">Task</span><div class="taskRow"><input id="e_t" placeholder="What is the task?" autocomplete="off"><button type="button" id="e_iconBtn" class="iconPreview" aria-label="Choose icon">+</button><input type="hidden" id="e_icon"></div></label>
+    <div class="edRows" id="edRows"></div>
+    <div class="er winOnly edWinT"><label>Starts<input id="e_bs" type="time"></label><label>Ends<input id="e_be" type="time"></label></div>
+    <div class="taskOnly sdWrap" id="e_stepsWrap"><span class="sdLab">Subtasks <em id="e_stepsN"></em></span><div id="e_steps"></div><button type="button" id="e_stepAdd" class="sdAdd">+ Add subtask</button></div>
+    <label class="edDet"><span id="e_dlab" class="sdLab">Details</span><textarea id="e_details" rows="2" placeholder="What this task is, or how to do it"></textarea></label>
+    <div class="edActs"><div class="edMove taskOnly"><button type="button" id="e_up">↑ Move up</button><button type="button" id="e_dn">↓ Move down</button></div><button type="button" id="e_del" class="edDel">Delete task</button></div>
+    <div class="edLegacy" hidden>
+      <label id="e_wrap" style="display:none">Window<select id="e_w"></select></label>
+      <label>What colour?<div class="colorRow" id="e_colors" role="radiogroup" aria-label="Colour"></div><input type="hidden" id="e_color"></label>
+      <label class="taskOnly">Kind<select id="e_k">
     <option value="core">Core (shrinks last)</option><option value="flex">Flexible (shrinks first)</option><option value="opt">Optional (cut first)</option>
     <option value="fixedlen">Fixed length</option><option value="sug">Suggestion, no time</option><option value="open">Open slot</option>
   </select><span class="kindHint" id="e_khint"></span></label>
-  <label class="taskOnly" id="e_howlong">How long?<div class="chips" id="e_presets">
+      <label class="taskOnly" id="e_howlong">How long?<div class="chips" id="e_presets">
     <button type="button" data-m="5">5m</button><button type="button" data-m="15">15m</button><button type="button" data-m="20">20m</button>
     <button type="button" data-m="30">30m</button><button type="button" data-m="45">45m</button><button type="button" data-m="60">1h</button><button type="button" data-m="90">1.5h</button>
   </div></label>
-  <div class="er taskOnly" id="e_se"><label>Starts<input id="e_s" type="time"></label><label>Ends<input id="e_e" type="time"></label></div>
-  <div class="er taskOnly" id="e_mrow"><label>Minutes<input id="e_d" type="number" min="0"></label><label id="e_mwrap">Shortest<input id="e_m" type="number" min="0"></label></div>
-  <label class="fxRow taskOnly" id="e_fxrow"><input type="checkbox" id="e_fx"><span class="fxTxt"><b>Fixed time</b><small>Pins the task to its Start time and it never moves. Leave off and Start is only a preferred time: the task can start later if the tasks before it run long.</small></span></label>
-  <div class="days taskOnly" id="e_days"></div>
-  <div class="er taskOnly" id="e_dates"><label>Starts on<input id="e_from" type="date"></label><label>Ends on<input id="e_to" type="date"></label></div>
-  <label class="taskOnly" id="e_typesWrap" style="display:none">Day types<div class="chips" id="e_types"></div></label>
-  <div class="er winOnly"><label>Starts<input id="e_bs" type="time"></label><label>Ends<input id="e_be" type="time"></label></div>
-  <label><span id="e_dlab">Details</span><textarea id="e_details" rows="2" placeholder="What this task is, or how to do it"></textarea></label>
-  <div class="taskOnly sdWrap" id="e_stepsWrap"><span class="sdLab">Subtasks <em id="e_stepsN"></em></span><div id="e_steps"></div><button type="button" id="e_stepAdd" class="sdAdd">+ Add subtask</button></div>
-  <p class="edErr" id="e_err" role="alert" hidden></p>
-  <div class="ea"><button id="e_del">Delete</button><button id="e_up">Up</button><button id="e_dn">Down</button><button id="e_x">Cancel</button><button id="e_ok">Save</button></div>
-</div></dialog>
+      <div class="er taskOnly" id="e_se"><label>Starts<input id="e_s" type="time"></label><label>Ends<input id="e_e" type="time"></label></div>
+      <div class="er taskOnly" id="e_mrow"><label>Minutes<input id="e_d" type="number" min="0"></label><label id="e_mwrap">Shortest<input id="e_m" type="number" min="0"></label></div>
+      <label class="fxRow taskOnly" id="e_fxrow"><input type="checkbox" id="e_fx"><span class="fxTxt"><b>Fixed time</b><small>Pins the task to its Start time and it never moves. Leave off and Start is only a preferred time: the task can start later if the tasks before it run long.</small></span></label>
+      <div class="days taskOnly" id="e_days"></div>
+      <div class="er taskOnly" id="e_dates"><label>Starts on<input id="e_from" type="date"></label><label>Ends on<input id="e_to" type="date"></label></div>
+      <label class="taskOnly" id="e_typesWrap" style="display:none">Day types<div class="chips" id="e_types"></div></label>
+      <button type="button" id="e_x">Cancel</button><button type="button" id="e_ok">Save</button>
+    </div>
+  </div></div></dialog>
+<dialog id="edSub"><div class="qaSheet dpSheet"><div class="qaGrab"></div><div class="qaTop"><button type="button" id="es_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2 id="es_t"></h2><button type="button" id="es_ok" class="qaSv">Done</button></div><div id="es_body" class="esBody"></div></div></dialog>
 <dialog id="iconPick"><div class="ef">
   <div class="ipTop"><button type="button" id="ip_x" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div class="ipSearch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="ip_q" type="search" placeholder="Search" autocomplete="off"></div></div>
   <div id="ip_scroll"><div id="ip_groups"></div>
@@ -252,19 +269,24 @@
   </div>
   <div class="ea"><button id="sc_x">Cancel</button></div>
 </div></dialog>
-<dialog id="mvDlg"><div class="ef">
-  <h2 id="mv_h">Move or copy to</h2>
-  <label>Day<input type="date" id="mv_d"></label>
-  <label id="mv_tw">At (optional)<input type="time" id="mv_t"></label>
-  <div class="ea"><button id="mv_inbox">To inbox</button><button id="mv_copy">Copy</button><button id="mv_go">Move</button></div>
-  <div class="ea"><button id="mv_x">Cancel</button></div>
+<dialog id="mvDlg"><div class="qaSheet dpSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="mv_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2 id="mv_h">Move or copy to</h2><span></span></div>
+  <div class="dpChips" id="mv_chips"><button type="button" data-n="1">Tomorrow</button><button type="button" data-n="7">Next week</button><button type="button" data-n="14">In 2 weeks</button></div>
+  <div class="dpCal"><div class="dpMon"><b id="mv_mon"></b><button type="button" id="mv_prev" class="calNav" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="mv_next" class="calNav" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div><div class="calGrid calWd" id="mv_wd"></div><div class="calGrid dpGrid" id="mv_grid"></div></div>
+  <input type="date" id="mv_d" hidden>
+  <label class="timeCard" id="mv_tw"><span class="tcIc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="tcL">At (optional)</span><input type="time" id="mv_t" aria-label="At, optional"></label>
+  <button type="button" class="priBtn" id="mv_go">Move</button>
+  <div class="mvAlt"><button type="button" id="mv_copy">Copy</button><button type="button" id="mv_inbox">To inbox</button></div>
 </div></dialog>
-<dialog id="shDlg"><div class="ef">
-  <h2>Running late?</h2>
-  <p class="wn">Pushes the rest of the day later. Fixed-time tasks stay where they are.</p>
-  <label>Push later by<div class="chips" id="sh_chips"><button type="button" data-m="15">15m</button><button type="button" data-m="30">30m</button><button type="button" data-m="45">45m</button><button type="button" data-m="60">1h</button></div></label>
-  <label>Starting from<input type="time" id="sh_from"></label>
-  <div class="ea"><button id="sh_clear">Clear</button><button id="sh_x">Cancel</button><button id="sh_ok">Apply</button></div>
+<dialog id="shDlg"><div class="qaSheet dpSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="sh_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2>Running late?</h2><button type="button" id="sh_clear" class="qaGo">Clear</button></div>
+  <p class="sheetSub">Pushes the rest of the day later. Fixed-time tasks stay where they are.</p>
+  <p class="sheetLbl">Push later by</p>
+  <div class="bigChips" id="sh_chips"><button type="button" data-m="15">15m</button><button type="button" data-m="30">30m</button><button type="button" data-m="45">45m</button><button type="button" data-m="60">1h</button></div>
+  <p class="sheetLbl">Starting from</p>
+  <label class="timeCard"><span class="tcIc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><input type="time" id="sh_from" aria-label="Starting from"></label>
+  <p class="prevLine" id="sh_prev"></p>
+  <button type="button" class="priBtn" id="sh_ok">Push my day</button>
 </div></dialog>
 <dialog id="snapDlg"><div class="ef">
   <h2>Snapshots</h2>
@@ -279,62 +301,87 @@
 </div></dialog>
 <dialog id="clrDlg"><div class="ef">
   <h2>Clear all data?</h2>
-  <p class="wn">This permanently deletes everything Yotei has saved on this device: routines, blocks, days, history, notes, inbox and settings. The app itself stays installed. This cannot be undone.</p>
+  <p class="wn">This permanently deletes everything Yoteii has saved on this device: routines, blocks, days, history, notes, inbox and settings. The app itself stays installed. This cannot be undone.</p>
   <button class="add" id="clr_exp">Export a backup first</button>
   <label class="chk"><input type="checkbox" id="clr_ok"> I understand this deletes everything</label>
   <div class="ea"><button id="clr_x">Cancel</button><button id="clr_go" class="danger" disabled>Clear data</button></div>
 </div></dialog>
-<dialog id="qaDlg"><div class="ef">
-  <h2 id="qa_title">New task</h2>
-  <input id="qa_t" maxlength="80" autocomplete="off" aria-label="Task">
-  <div class="ea"><button type="button" id="qa_x">Cancel</button><button type="button" id="qa_ok">Add</button></div>
+<dialog id="qaDlg"><div class="qaSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="qa_x" aria-label="Close"></button><h2 id="qa_title">New inbox task</h2><button type="button" id="qa_ok" class="qaSv">Add</button></div>
+  <div class="qaTf"><input id="qa_t" maxlength="80" autocomplete="off" placeholder="What&#8217;s on your mind?" aria-label="Task"><button type="button" id="qa_imp" class="qaFlag" aria-pressed="false" aria-label="Important"></button></div>
+  <label class="qaLb" for="qa_note">Note</label><textarea id="qa_note" rows="3" maxlength="300" placeholder="Add a note (optional)"></textarea>
+  <button type="button" id="qa_sch" class="qaSch"></button><button type="button" id="qa_del" class="qaDel">Delete task</button>
 </div></dialog>
-<dialog id="tdeDlg"><div class="ef">
-  <h2 id="tde_title">New to-do</h2>
-  <div class="taskRow"><input id="tde_t" maxlength="80" autocomplete="off" placeholder="What needs doing?" aria-label="To-do"><button type="button" id="tde_iconBtn" class="iconPreview" aria-label="Choose icon">+</button><input type="hidden" id="tde_icon"></div>
-  <label>Colour<div class="colorRow" id="tde_colors" role="radiogroup" aria-label="Colour"></div><input type="hidden" id="tde_color"></label>
-  <label id="tde_lw">List<select id="tde_list"></select></label>
-  <div class="er"><label>Due date<input id="tde_d" type="date"></label><label>Time (optional)<input id="tde_tm" type="time"></label></div>
-  <div class="chips" id="tde_chips"><button type="button" data-q="0">Today</button><button type="button" data-q="1">Tomorrow</button><button type="button" data-q="7">Next week</button><button type="button" data-q="nd">No date</button><button type="button" data-q="nt">No time</button></div>
-  <label>Repeat<select id="tde_rep"><option value="">Does not repeat</option><option value="d">Every day</option><option value="wd">Weekdays</option><option value="w">Every week</option><option value="m">Every month</option><option value="y">Every year</option></select></label>
-  <div class="sdWrap"><span class="sdLab">Tags</span><div id="tde_tags" class="tgRow"></div></div>
-  <div class="chips"><button type="button" id="tde_star" aria-pressed="false">&#9733; Starred</button></div>
-  <label>Note<textarea id="tde_note" rows="2" placeholder="Anything worth remembering"></textarea></label>
-  <div class="sdWrap"><span class="sdLab">Subtasks <em id="tde_stepsN"></em></span><div id="tde_steps"></div><button type="button" id="tde_stepAdd" class="sdAdd">+ Add subtask</button></div>
-  <div class="chips" id="tde_move"><button type="button" id="tde_tl">Send to Timeline</button><button type="button" id="tde_inbox">Move to Inbox</button></div>
+<dialog id="tdeDlg"><div class="qaSheet tdeSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="tde_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2 id="tde_title">New to-do</h2><button type="button" id="tde_ok" class="qaSv">Save</button></div>
+  <div class="tdeBody">
+  <div class="qaTf"><input id="tde_t" maxlength="80" autocomplete="off" placeholder="What needs doing?" aria-label="To-do"><button type="button" id="tde_star" class="tdeStar" aria-pressed="false" aria-label="Starred"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></button></div>
   <p class="edErr" id="tde_err" role="alert" hidden></p>
-  <div class="ea"><button type="button" id="tde_del" class="danger">Delete</button><button type="button" id="tde_x">Cancel</button><button type="button" id="tde_ok">Save</button></div>
+  <input type="hidden" id="tde_d">
+  <div class="ibSheet tdeGrp">
+    <button type="button" class="tdeRow" id="tde_dRow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span>Date</span><em id="tde_dV">None</em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <label class="tdeRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Time</span><em id="tde_tmV">None</em><button type="button" class="tdeClr" id="tde_tmX" aria-label="Clear time" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input type="time" id="tde_tm" class="tdeOv" aria-label="Time"></label>
+    <label class="tdeRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l3 3-3 3M20 5H8a4 4 0 0 0-4 4v1M7 22l-3-3 3-3M4 19h12a4 4 0 0 0 4-4v-1"/></svg><span>Repeat</span><em id="tde_repV">Never</em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><select id="tde_rep" class="tdeOv" aria-label="Repeat"><option value="">Does not repeat</option><option value="d">Every day</option><option value="wd">Weekdays</option><option value="w">Every week</option><option value="m">Every month</option><option value="y">Every year</option></select></label>
+  </div>
+  <div class="ibSheet tdeGrp">
+    <label class="tdeRow" id="tde_lw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg><span>List</span><em id="tde_lV"></em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><select id="tde_list" class="tdeOv" aria-label="List"></select></label>
+    <button type="button" class="tdeRow" id="tde_tgRow" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/></svg><span>Tags</span><em id="tde_tgV">None</em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="tdePanel" id="tde_tgP" hidden><div id="tde_tags" class="tgRow"></div></div>
+    <button type="button" class="tdeRow" id="tde_clRow" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1" fill="currentColor"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/><circle cx="15.5" cy="10" r="1" fill="currentColor"/><path d="M12 21a2.5 2.5 0 0 1 0-5h1.5a1.5 1.5 0 0 0 0-3"/></svg><span>Colour &amp; icon</span><em id="tde_clV"></em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <div class="tdePanel" id="tde_clP" hidden><div class="colorRow" id="tde_colors" role="radiogroup" aria-label="Colour"></div><input type="hidden" id="tde_color"><div class="tdeIcR"><span>Icon</span><button type="button" id="tde_iconBtn" class="iconPreview" aria-label="Choose icon">+</button><input type="hidden" id="tde_icon"></div></div>
+  </div>
+  <h4 class="tdeH">Subtasks <em id="tde_stepsN"></em></h4>
+  <div class="ibSheet tdeGrp tdeSub"><div id="tde_steps"></div><button type="button" id="tde_stepAdd" class="tdeAdd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Add subtask</span></button></div>
+  <h4 class="tdeH">Note</h4>
+  <textarea id="tde_note" rows="3" placeholder="Anything worth remembering" aria-label="Note"></textarea>
+  <div id="tde_move"><button type="button" id="tde_tl" class="tdeWide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h14"/></svg>Send to Timeline</button>
+  <div class="tdeFoot"><button type="button" id="tde_inbox">Move to Inbox</button><button type="button" id="tde_del" class="danger">Delete to-do</button></div></div>
+  </div>
 </div></dialog>
+<dialog id="dpDlg"><div class="qaSheet dpSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="dp_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2>Due date</h2><button type="button" id="dp_ok" class="qaSv">Done</button></div>
+  <div class="dpChips" id="dp_chips"><button type="button" data-q="today">Today</button><button type="button" data-q="tomorrow">Tomorrow</button><button type="button" data-q="week">Next week</button><button type="button" data-q="none">No date</button></div>
+  <div class="dpCal"><div class="dpMon"><b id="dp_mon"></b><button type="button" id="dp_prev" class="calNav" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="dp_next" class="calNav" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div><div class="calGrid calWd" id="dp_wd" aria-hidden="true"></div><div class="calGrid dpGrid" id="dp_grid"></div></div>
+  <div class="ibSheet tdeGrp">
+    <label class="tdeRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Time</span><em id="dp_tV">None</em><button type="button" class="tdeClr" id="dp_tX" aria-label="Clear time" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><input type="time" id="dp_tm" class="tdeOv" aria-label="Time"></label>
+    <label class="tdeRow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l3 3-3 3M20 5H8a4 4 0 0 0-4 4v1M7 22l-3-3 3-3M4 19h12a4 4 0 0 0 4-4v-1"/></svg><span>Repeat</span><em id="dp_rV">Never</em><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><select id="dp_rep" class="tdeOv" aria-label="Repeat"><option value="">Does not repeat</option><option value="d">Every day</option><option value="wd">Weekdays</option><option value="w">Every week</option><option value="m">Every month</option><option value="y">Every year</option></select></label>
+  </div>
+  <button type="button" id="dp_clr" class="qaDel dpClr">Clear date</button>
+</div></dialog>
+<dialog id="jumpDlg"><div class="qaSheet dpSheet"><div class="qaGrab"></div>
+  <div class="qaTop"><button type="button" id="jp_x" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><h2>Go to date</h2><button type="button" id="jp_today" class="qaSv">Today</button></div>
+  <div class="dpChips" id="jp_chips"><button type="button" data-q="yesterday">Yesterday</button><button type="button" data-q="today">Today</button><button type="button" data-q="tomorrow">Tomorrow</button><button type="button" data-q="week">Next week</button></div>
+  <div class="dpCal"><div class="dpMon"><b id="jp_mon"></b><button type="button" id="jp_prev" class="calNav" aria-label="Previous month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" id="jp_next" class="calNav" aria-label="Next month"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div><div class="calGrid calWd" id="jp_wd" aria-hidden="true"></div><div class="calGrid dpGrid" id="jp_grid"></div></div>
+  <p class="jpKey"><span><i class="k away"></i>Away day</span><span><i class="k note"></i>Note</span></p>
+</div></dialog>
+<dialog id="dayDlg" class="sheet"><div class="shIn"><div class="csHandle"></div><div><h2 id="dm_title"></h2><p class="suSub" id="dm_sub" style="margin-top:4px"></p></div><div class="dmList" id="dmList"></div><div class="shFoot"><button type="button" id="dm_x" class="suGhost">Close</button></div></div></dialog>
 <dialog id="tdlDlg"><div class="ef">
   <h2 id="tdl_title">New list</h2>
   <div class="taskRow"><input id="tdl_t" maxlength="24" autocomplete="off" placeholder="List name" aria-label="List name"><button type="button" id="tdl_iconBtn" class="iconPreview" aria-label="Choose icon">+</button><input type="hidden" id="tdl_icon"></div>
   <label>Colour<div class="colorRow" id="tdl_colors" role="radiogroup" aria-label="Colour"></div><input type="hidden" id="tdl_color"></label>
   <div class="ea"><button type="button" id="tdl_del" class="danger">Delete list</button><button type="button" id="tdl_x">Cancel</button><button type="button" id="tdl_ok">Save</button></div>
 </div></dialog>
-<dialog id="dtDlg"><div class="ef">
-  <h2 id="dt_title">New day type</h2>
-  <input id="dt_t" maxlength="14" autocomplete="off" placeholder="Name, like Work" aria-label="Day type name">
-  <p class="edErr" id="dt_err" role="alert" hidden></p>
-  <div class="ea"><button type="button" id="dt_del" class="danger">Delete</button><button type="button" id="dt_x">Cancel</button><button type="button" id="dt_ok">Save</button></div>
-</div></dialog>
+<dialog id="pkDlg" class="sheet"><div class="shIn"><div class="csHandle"></div><div><h2>Your peak</h2><p class="suSub" id="pk_sub"></p></div><div class="chips" id="pk_list"></div><div class="shFoot"><button type="button" id="pk_ok" class="suOk">Move</button><button type="button" id="pk_x" class="suGhost">Cancel</button></div></div></dialog>
+<dialog id="slotDlg" class="sheet"><div class="shIn"><div class="csHandle"></div><div><h2 id="sl_title">Swap</h2><p class="suSub" style="margin-top:4px">Tasks already in this slot stay and appear under the new name.</p></div><div class="dtTiles" id="sl_opts"></div><div class="shFoot"><button type="button" id="sl_ok" class="suOk">Save</button><button type="button" id="sl_x" class="suGhost">Cancel</button></div></div></dialog>
+<dialog id="dtDlg" class="sheet"><div class="shIn"><div class="csHandle"></div><div><h2 id="dt_title">New day type</h2><p class="suSub" style="margin-top:4px">It shows up in every block of the day, next to Home, School and Away.</p></div><input id="dt_t" class="shField" maxlength="14" autocomplete="off" placeholder="Name, like Night shift" aria-label="Day type name"><div class="dtIcRow"><span>Icon</span><button type="button" id="dt_iconBtn" class="dtIcBtn" aria-label="Choose an icon">+</button></div><p class="edErr" id="dt_err" role="alert" hidden></p><div class="shFoot"><button type="button" id="dt_ok" class="suOk">Save</button><button type="button" id="dt_del" class="suDanger">Delete day type</button><button type="button" id="dt_x" class="suGhost">Cancel</button></div></div></dialog>
 <dialog id="tgDlg"><div class="ef">
   <h2 id="tg_title">New tag</h2>
   <input id="tg_t" maxlength="20" autocomplete="off" placeholder="Tag name, like errands" aria-label="Tag name">
   <label>Colour<div class="colorRow" id="tg_colors" role="radiogroup" aria-label="Colour"></div><input type="hidden" id="tg_color"></label>
   <div class="ea"><button type="button" id="tg_del" class="danger">Delete tag</button><button type="button" id="tg_x">Cancel</button><button type="button" id="tg_ok">Save</button></div>
 </div></dialog>
-<dialog id="welDlg" aria-label="Welcome to Yotei"><div class="wlIn">
+<dialog id="welDlg" aria-label="Welcome to Yoteii"><div class="wlIn">
   <button type="button" id="wl_skip" class="wlSkip">Skip</button>
   <div class="wlTrack" id="wl_track">
-    <section class="wlPg" style="--g:#3b82f6">
-      <div class="wlHero"><svg class="wlLogo" viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="220" r="118" fill="none" stroke="#1d4ed8" stroke-width="16" opacity="0.6"/><circle cx="256" cy="220" r="118" fill="none" stroke="#60a5fa" stroke-width="3" opacity="0.4"/><polyline points="194,222 240,268 320,176" fill="none" stroke="#60a5fa" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><circle cx="208" cy="396" r="7" fill="#1d4ed8"/><circle cx="232" cy="396" r="7" fill="#1d4ed8"/><circle cx="256" cy="396" r="7" fill="#3b82f6"/><circle cx="280" cy="396" r="7" fill="#3b82f6"/><circle cx="304" cy="396" r="7" fill="#60a5fa"/></svg></div>
-      <h2 class="wlBig wlName">Yotei</h2>
+    <section class="wlPg" style="--g:#4f82f2">
+      <div class="wlHero"><svg class="wlLogo" viewBox="62.5 69 360 340" aria-hidden="true"><defs><radialGradient id="wo1" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#9bbcff"/><stop offset="0.5" stop-color="#4f82f2"/><stop offset="1" stop-color="#3265da"/></radialGradient><radialGradient id="wo2" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#a6c8ff"/><stop offset="0.5" stop-color="#6aa4f8"/><stop offset="1" stop-color="#4684e6"/></radialGradient><radialGradient id="wo3" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#cde3fe"/><stop offset="0.5" stop-color="#8fbcfc"/><stop offset="1" stop-color="#689ef0"/></radialGradient><radialGradient id="wo4" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#ffffff"/><stop offset="0.5" stop-color="#d3d9fb"/><stop offset="1" stop-color="#aab3ec"/></radialGradient><radialGradient id="wo5" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#fff3c4"/><stop offset="0.5" stop-color="#fdd870"/><stop offset="1" stop-color="#f0b445"/></radialGradient><radialGradient id="wo6" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#ffe784"/><stop offset="0.5" stop-color="#fbbe2c"/><stop offset="1" stop-color="#ee7c12"/></radialGradient><linearGradient id="wring" gradientUnits="userSpaceOnUse" x1="0" y1="92" x2="0" y2="390"><stop offset="0" stop-color="#78b0ff"/><stop offset="1" stop-color="#2f6aea"/></linearGradient><radialGradient id="wsg" cx="363" cy="130" r="101.19999999999999" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffb92e" stop-opacity="0.36"/><stop offset="1" stop-color="#ffb92e" stop-opacity="0"/></radialGradient><filter id="wsoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7"/></filter><mask id="wgap" maskUnits="userSpaceOnUse" x="-600" y="-600" width="2000" height="2000"><rect x="-600" y="-600" width="2000" height="2000" fill="#fff"/><path d="M353.8 168.8A143.5 143.5 0 0 0 313.8 124.4" fill="none" stroke="#000" stroke-width="60" filter="url(#wsoft)"/></mask></defs><circle class="wlGlow" cx="363" cy="130" r="101.2" fill="url(#wsg)"/><g mask="url(#wgap)"><circle cx="229.5" cy="240.5" r="143.5" fill="none" stroke="url(#wring)" stroke-width="16"/></g><g stroke="#7fb4fb" stroke-width="8" stroke-linecap="round" fill="none"><path d="M338 240.5L358 240.5"/><path d="M229.5 132L229.5 112"/><path d="M121 240.5L101 240.5"/><path d="M229.5 349L229.5 369"/></g><g class="wlOrb" style="--s:1.5"><circle cx="175" cy="233" r="11" fill="#0a1222"/><circle class="wlOrbF" cx="175" cy="233" r="11" fill="url(#wo1)"/></g><g class="wlOrb" style="--s:1.45"><circle cx="200" cy="262" r="14" fill="#0a1222"/><circle class="wlOrbF" cx="200" cy="262" r="14" fill="url(#wo2)"/></g><g class="wlOrb" style="--s:1.4"><circle cx="230" cy="296" r="17" fill="#0a1222"/><circle class="wlOrbF" cx="230" cy="296" r="17" fill="url(#wo3)"/></g><g class="wlOrb" style="--s:1.35"><circle cx="265" cy="252" r="21" fill="#0a1222"/><circle class="wlOrbF" cx="265" cy="252" r="21" fill="url(#wo4)"/></g><g class="wlOrb" style="--s:1.25"><circle cx="306" cy="200" r="28" fill="#0a1222"/><circle class="wlOrbF" cx="306" cy="200" r="28" fill="url(#wo5)"/></g><g class="wlOrb" style="--s:1.15"><circle cx="363" cy="130" r="44" fill="#0a1222"/><circle class="wlOrbF" cx="363" cy="130" r="44" fill="url(#wo6)"/></g></svg></div>
+      <h2 class="wlBig wlName">Yoteii</h2>
       <p class="wlSub">Your day, planned around when you wake up.</p>
       <div class="wlPills"><span>Timeline</span><span>To-do</span><span>Inbox</span></div>
     </section>
     <section class="wlPg" style="--g:#f97316">
       <h2 class="wlBig">A day that flows from your wake time</h2>
-      <p class="wlSub">Tell Yotei when you wake up and it lays out every block of your day.</p>
+      <p class="wlSub">Tell Yoteii when you wake up and it lays out every block of your day.</p>
       <div class="wlMock">
         <div class="mkWake"><span>Wake time</span><b>6:30 AM</b></div>
         <div class="mkRow" style="--c:#f59e0b"><i class="mkDot"></i><div><b>Morning routine</b><small>6:30 – 7:30 AM</small></div><span class="mkChk"></span></div>
@@ -342,14 +389,24 @@
         <div class="mkRow" style="--c:#a78bfa"><i class="mkDot"></i><div><b>Study block</b><small>9:45 – 11:00 AM</small></div><span class="mkChk"></span></div>
       </div>
     </section>
+    <section class="wlPg" style="--g:#14b8a6">
+      <h2 class="wlBig">Routines that shrink to fit</h2>
+      <p class="wlSub">Short on time? Yoteii trims the extras first and keeps the core. Tap Run and it counts you through each step.</p>
+      <div class="wlMock">
+        <div class="mkRow" style="--c:#14b8a6"><i class="mkDot"></i><div><b>Wash face</b><small>Morning routine</small></div><span class="mkTag">core</span></div>
+        <div class="mkRow" style="--c:#60a5fa"><i class="mkDot"></i><div><b>Stretch</b><small>Morning routine</small></div><span class="mkTag">flexible</span></div>
+        <div class="mkRow cut" style="--c:#a4a4ab"><i class="mkDot"></i><div><b>Journal</b><small>Dropped when time is short</small></div><span class="mkTag">optional</span></div>
+        <div class="mkRun"><small>Step 2 of 3</small><b>Stretch</b><div class="mkTime">2:40</div><div class="mkBar"><i></i></div><div class="mkBtns"><span class="mkBtn">Pause</span><span class="mkBtn">+1 min</span><span class="mkBtn">Skip</span></div></div>
+      </div>
+    </section>
     <section class="wlPg" style="--g:#22c55e">
       <h2 class="wlBig">Blocks that fit where you are</h2>
-      <p class="wlSub">Pick Home, School or Away for each block, and your tasks follow.</p>
+      <p class="wlSub">Pick Home, School or Away for each block, and your tasks follow. Give it a tap.</p>
       <div class="wlMock">
-        <div class="mkSeg"><span class="on">Home</span><span>School</span><span>Away</span></div>
-        <div class="mkCard"><b>Morning routine</b><small>Home day · 4 tasks</small></div>
-        <div class="mkCard"><b>First climb</b><small>Switches to School at 8:00 AM</small></div>
-        <div class="mkCard"><b>Evening wind-down</b><small>Home day · 2 tasks</small></div>
+        <div class="mkSeg" role="tablist"><span class="on" role="tab">Home</span><span role="tab">School</span><span role="tab">Away</span></div>
+        <div class="mkCard"><b>Morning routine</b><small id="wl_m1">Home · 4 tasks</small></div>
+        <div class="mkCard"><b>First climb</b><small id="wl_m2">Home · 3 tasks</small></div>
+        <div class="mkCard"><b>Evening wind-down</b><small id="wl_m3">Home · 2 tasks</small></div>
       </div>
     </section>
     <section class="wlPg" style="--g:#ec4899">
@@ -370,20 +427,85 @@
         <div class="mkTd" style="--lc:#22c55e"><span class="mkRing"></span><div><b>Submit the report</b><span class="mkChip late">Overdue · Yesterday</span></div></div>
         <div class="mkTd" style="--lc:#a4a4ab"><div><b>Call the dentist</b><small>In your Inbox</small></div><span class="mkBtn">Schedule</span></div>
       </div>
+    </section>
+    <section class="wlPg" style="--g:#eab308">
+      <h2 class="wlBig">See how your days add up</h2>
+      <p class="wlSub">Finish 70% of a day and it counts toward your streak. History and a weekly review show what is working.</p>
+      <div class="wlMock">
+        <div class="mkStreak"><b>12</b><div><span>day streak</span><small>Best so far: 18</small></div></div>
+        <div class="mkBars"><span style="--h:60%"></span><span style="--h:85%"></span><span style="--h:45%"></span><span style="--h:100%" class="top"></span><span style="--h:70%"></span><span style="--h:30%"></span><span style="--h:55%"></span></div>
+        <div class="mkCard"><b>Your week</b><small>Best day: Thursday · Best window: Morning</small></div>
+      </div>
+    </section>
+    <section class="wlPg" style="--g:#4f82f2">
+      <h2 class="wlBig">Your day is ready</h2>
+      <p class="wlSub">Here is what you chose. You can change all of it later in Settings.</p>
+      <div class="wlMock">
+        <div class="mkWake"><span>Wake time</span><b id="wl_sWake">6:30 AM</b></div>
+        <div class="mkWake"><span>Energy rhythm</span><b id="wl_sRhy">In between</b></div>
+        <div class="mkWake"><span>Morning routine</span><b id="wl_sPre">Start empty</b></div>
+      </div>
       <p class="wlCredit">Inspired by Structured</p>
     </section>
   </div>
-  <div class="wlFoot"><div class="wlDots" id="wl_dots" aria-hidden="true"></div><button type="button" id="wl_next" class="wlNext">Next</button></div>
+  <div class="wlFoot"><div class="wlDots" id="wl_dots" aria-hidden="true"></div><div class="wlRow"><button type="button" id="wl_back" class="wlBack" hidden>Back</button><button type="button" id="wl_next" class="wlNext">Next</button></div></div>
 </div></dialog>
-<dialog id="setupDlg"><div class="ef">
-  <h2>Welcome to Yotei</h2>
-  <p class="wn">A few quick choices to get started. You can change all of it later in Settings.</p>
-  <label>When do you usually wake up?<input type="time" id="su_wake" value="05:00"></label>
-  <label>Energy rhythm<select id="su_chrono"><option value="early">Early bird</option><option value="normal" selected>In between</option><option value="late">Night owl</option></select></label>
-  <label>Morning routine<select id="su_pre"></select></label>
-  <label>Night routine<select id="su_night"></select></label>
-  <div class="ea"><button id="su_skip">Skip</button><button id="su_ok">Start</button></div>
+<dialog id="setupDlg" aria-label="Set up Yoteii"><div class="suWrap">
+  <div class="suTop" id="su_top" hidden><span id="su_stepTxt">Step 1 of 5</span><div class="suBar"><i id="su_bar"></i></div></div>
+  <div class="suBody" id="su_body">
+
+    <div class="suStep suHero" data-s="0"><div class="suLogo" id="su_logo"></div><h1>Yoteii</h1><p>Your day, planned around when you wake up.</p></div>
+
+    <div class="suStep" data-s="1" hidden>
+      <div><h2>Nice to meet you</h2><p class="suSub" style="margin-top:4px">A few details so Yoteii can set sensible sleep and energy defaults. They stay on your device.</p></div>
+      <div class="suF"><label for="su_name">What should we call you?</label><input class="suIn2" id="su_name" type="text" maxlength="30" autocomplete="off" autocapitalize="words" placeholder="Your name"></div>
+      <div class="suF"><label for="su_age">Age</label><div class="suAge"><button type="button" id="su_ageM" aria-label="One year younger">&minus;</button><input id="su_age" type="number" inputmode="numeric" min="1" max="110" placeholder="Age"><button type="button" id="su_ageP" aria-label="One year older">+</button></div></div>
+      <div class="suF"><label>Sex <i style="font-style:normal;opacity:.7">(optional)</i></label><div class="seg suSex" id="su_sex"><button type="button" data-v="m">Male</button><button type="button" data-v="f">Female</button><button type="button" data-v="n">Prefer not to say</button></div></div>
+      <p class="pv" id="su_sleepHint"></p>
+    </div>
+
+    <div class="suStep" data-s="2" hidden>
+      <div><h2>When do you wake up?</h2><p class="suSub" style="margin-top:4px">Yoteii lays out your whole day from your wake time.</p></div>
+      <div class="dTime"><label for="su_wake">I usually wake up at</label><input type="time" id="su_wake" value="06:30"></div>
+      <div><p class="cH">Energy rhythm</p><div class="seg" id="cSeg"></div><select id="su_chrono" class="hid"><option value="early">Early bird</option><option value="normal" selected>In between</option><option value="late">Night owl</option></select></div>
+      <p class="pv" style="min-height:0">Not sure? Keep In between. Yoteii learns your real peaks from your energy check-ins.</p>
+      <div class="suPrev"><p class="suPl" id="su_dayT">Your day</p><div class="suDb" id="su_dayBar"></div><div class="suTl"><span id="su_dayA"></span><span id="su_dayB"></span></div><p class="suPt" id="su_dayP"></p></div>
+    </div>
+
+    <div class="suStep" data-s="3" hidden>
+      <div><h2>Pick your day types</h2><p class="suSub" style="margin-top:4px">Home is always there. Pick up to two more. Away makes room when you pick two.</p></div>
+      <div class="suTypes" id="su_types"></div>
+      <p class="pv suWarn" id="su_typeMsg" role="status" hidden></p>
+      <div class="suSumRow"><span>You will have</span><div class="suSum" id="su_sum"></div></div>
+      <div class="grp" id="su_outBox" hidden>
+        <div><p class="cH" id="su_daysT">Usually out on</p><div class="suDays" id="su_days"></div></div>
+        <div class="suBed"><label for="su_leave" id="su_leaveL">I leave home at</label><input type="time" id="su_leave" value="07:00" data-def="07:00"></div>
+        <p class="pv" id="su_leaveHint" style="min-height:0"></p>
+      </div>
+    </div>
+
+    <div class="suStep" data-s="4" hidden>
+      <div><h2>Your routines</h2><p class="suSub" style="margin-top:4px">Pick a starting point. You can edit every task later.</p></div>
+      <div class="grp">
+        <div><p class="cH">Morning routine</p><div class="chp" id="cPre"></div><p class="pv" id="pvPre"></p><select id="su_pre" class="hid"></select></div>
+        <div><p class="cH">Night routine</p><div class="chp" id="cNight"></div><p class="pv" id="pvNight"></p><select id="su_night" class="hid"></select></div>
+        <div><p class="cH">Bedtime <i style="font-style:normal;opacity:.7">(optional)</i></p><div class="suBed"><label for="su_bed">I usually go to sleep at</label><input type="time" id="su_bed" value="" data-def="22:00"></div><p class="pv" id="su_bedHint"></p></div>
+      </div>
+    </div>
+
+    <div class="suStep" data-s="5" hidden>
+      <div><h2>Stay on track</h2><p class="suSub" style="margin-top:4px">Get a nudge when it matters. Both are optional.</p></div>
+      <button type="button" class="suR" id="su_remB" role="switch" aria-checked="true"><span class="suIc" id="su_icRem"></span><span class="suRt"><b>Task reminders</b><small>A notification when a task starts</small></span><span class="suSw"></span></button>
+      <button type="button" class="suR" id="su_nudB" role="switch" aria-checked="true"><span class="suIc" id="su_icNud"></span><span class="suRt"><b>Energy check-ins</b><small>Three quick 1 to 5 ratings a day. They teach Yoteii when your energy really peaks.</small></span><span class="suSw"></span></button>
+      <p class="pv" style="min-height:0">Your phone will ask to allow notifications. Reminders are set with the phone for today and the next two days, so they still arrive when the app is closed. You can change this anytime in Settings.</p>
+    </div>
+
+    <div class="suStep suHero" data-s="6" hidden><div class="suDone" aria-hidden="true"></div><h1>You are all set</h1><p>Want a quick tour of how Yoteii works? It takes about a minute, and you can replay it any time from Settings, About.</p></div>
+
+  </div>
+  <div class="suFoot"><button id="su_ok" class="suOk">Get started</button><button id="su_skip" class="suGhost">Skip setup</button></div>
 </div></dialog>
+<dialog id="suOwnDlg" class="sheet" aria-label="Your own day type"><div class="shIn"><div class="csHandle"></div><div><h2 id="so_title">Add your own</h2><p class="suSub" style="margin-top:4px">A kind of day that is not Work, School or Sick, like Night shift or Travel.</p></div><input id="so_t" class="shField" maxlength="14" autocomplete="off" placeholder="Name, like Night shift" aria-label="Day type name"><div class="dtIcRow"><span>Icon</span><button type="button" id="so_iconBtn" class="dtIcBtn" aria-label="Choose an icon"></button></div><p class="edErr" id="so_err" role="alert" hidden></p><div class="shFoot"><button type="button" id="so_ok" class="suOk">Save</button><button type="button" id="so_del" class="suDanger" hidden>Remove</button><button type="button" id="so_x" class="suGhost">Cancel</button></div></div></dialog>
 <dialog id="runDlg"><div class="ef" style="text-align:center">
   <div class="rStep" id="runStep"></div>
   <div class="rIcon" id="runIcon"></div>
@@ -410,6 +532,6 @@
   <div id="ss_list"></div>
   <div class="ea"><button id="ss_all">Tick all</button><button id="ss_close">Close</button></div>
 </div></dialog>
-<script type="module" src="./main.js"></script>
+<script type="module" src="./src/js/main.js"></script>
 </body>
 </html>
