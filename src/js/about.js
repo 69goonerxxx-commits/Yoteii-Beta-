@@ -1,16 +1,17 @@
-export const APP_VERSION = '3.1.3';
+export const APP_VERSION = '4.0.2';
 export const FEATURES = [
   'A daily timeline built from your wake time, split into seven energy windows',
+  'My rhythm: suggests shifting your energy windows to match when your own energy ratings show you peak',
   'Morning and Night Routines that shrink (optional, then flexible, then core) to fit',
   'Home, School and Away modes for each window of the day, and tasks you can add to any mix of the three',
   'Every day is usable: plan upcoming days and update past ones',
   'Tasks with colors, 388 icons, subtasks, notes, fixed times and weekday rules',
   'Edit, reorder, duplicate or delete tasks and blocks (long-press to edit)',
-  'Editable sleep caps with a short-sleep warning',
+  'Optional sleep caps, off until you set them, with a short-sleep warning',
   'History and trends for the last 90 days',
   'Run mode that counts you through a routine step by step',
   'Streaks, a weekly view, routine templates and reminders',
-  'One-off tasks, an Inbox for unscheduled thoughts, and a To-do tab with lists, due dates, repeats and a calendar',
+  'One-off tasks, an Inbox for unscheduled thoughts (with notes, flags and sorting), and a To-do tab with lists, tags, a quick-add bar, a date picker, repeats and a calendar',
   'Edit a task for one day, from a day onward, or for all days, with weekday and mode limits',
   'Undo, drag and drop, usual day types, energy check-ins and a weekly review',
   'Move, copy, copy a whole day, or push the day later when running late',
@@ -21,10 +22,115 @@ export const FEATURES = [
 export const LIMITS = [
   'Your data lives on this device only (daily snapshots are kept here too), so export a backup now and then',
   'Past days are rebuilt from your current task list, so they can differ from how that day originally looked',
-  'In a browser, reminders only fire while Yotei is open or running in the background. In the Android app they are scheduled with the phone for today and the next two days',
+  'In a browser, reminders only fire while Yoteii is open or running in the background. In the Android app they are scheduled with the phone for today and the next two days',
   'Calendar import is a one-time copy of timed events, not a live sync'
 ];
 export const CHANGELOG = [
+  { v:'4.0.2', date:'Nov 2026',
+    added:[
+      'First-time setup is now full screen, like the tour: a welcome screen, five short steps (About you, wake time and rhythm, day types, routines and bedtime, reminders), then a choice to take the welcome tour or skip it',
+      'About you asks for a name, an age and, if you want, your sex. They stay on your device and you can edit them in the new Settings, Profile page',
+      'The wake time step shows your energy windows for the day and when your peak focus falls',
+      'Day types: Home plus up to two more. Pick Work or School for the days you head out, Sick, or your own with a name and an icon. Nothing is picked for you, and Away makes room when you pick two',
+      'You choose the weekdays you usually head out and the time you leave',
+      'Day types you make yourself can have an icon, in setup and in Settings, Day types',
+      'Task reminders and energy check-ins can be turned on at the end of setup'
+    ],
+    changed:[
+      'The welcome tour now comes after setup, and its last page shows what you chose',
+      'Leave time is no longer tied to School. It is the time you leave on the day you head out, whatever you call it. The setting is now called Leave time',
+      'The School rush morning routine is now called Quick start',
+      'The example in New day type is now Night shift instead of Gym day'
+    ],
+    fixed:[
+      'The time pickers now line up. The wheel opens on the time shown, and the time you scroll to is the time you get. Before, the rows drifted out of step, so scrolling to 12:45 PM could save 11:45 PM',
+      'The loading screen now spells Yoteii'
+    ]
+  },
+  { v:'4.0.1', date:'Oct 2026',
+    changed:[
+      'On the To-do tab sorted By date, dragging a to-do keeps the date sections. Tasks with the same date and time can swap places, and anything else snaps back with a short note',
+      'On the Timeline, dropping a task on the lower half of another task puts it after that task, so a task can be moved to the end of a window',
+      'A task with no start time now says Automatic under Starts, so it no longer reads the same as Kind: Flexible',
+      'The short-sleep warning in Settings, Schedule only shows after you change the sleep caps yourself',
+      'Sleep caps no longer start at 10 PM and 11 PM. They stay off until you set both in Settings, Schedule, or answer the new bedtime question in setup. While they are off, nothing is cut at night',
+      'School leave time is now a setting in Settings, Schedule instead of a fixed 6:00 AM. If you already used the app it stays at 6:00 AM until you change it. With no time set, School days run like Home days',
+      'First-time setup has an optional bedtime question that sets your sleep caps',
+      'With a sleep cap set, your Night routine window is the 3 hours before it, instead of starting 15 hours after you wake. A late riser no longer gets a night window that runs past bedtime, and the Evening Alert Zone before it is trimmed to fit',
+      'Caffeine tips for Second Climb and the Evening Alert Zone now show a cutoff time worked out from your bedtime, 6 hours before it',
+      'New Energy over the day chart in History: your average energy rating for every half hour since waking, with your energy windows shaded behind it and your likely peak marked once there are enough ratings',
+      'Optional energy check-in nudges, off until you turn them on in Settings, Reminders. Three gentle notifications a day at different times, so My rhythm gets ratings from across the day. They skip times near a rating you already made and stop before your sleep cap',
+      'The Afternoon Dip sheet can add an optional Nap suggestion (10 to 20 minutes) to your Home and Away days, and remove it again',
+      'With My rhythm on, Settings, Schedule has Move tasks into my peak: pick the tasks that need your best focus and they move into your Sustained Peak, with Undo',
+      'New energy rhythm choice, My rhythm: it learns when your energy really peaks from your energy ratings and can shift all your windows to match. It only suggests: a card under Energy by window in History offers Use My rhythm, Not now or Never, and Undo is one tap away. Settings, Schedule shows what it has learned and lets you reset it. A shift that would squeeze your evening into your night routine is held back',
+      'Two block names are plainer: Trough is now Afternoon Dip, and Wake Maintenance Zone is now Evening Alert Zone. The scientific names are still on each block\'s info sheet, and any name you changed yourself is kept',
+      'Every tab title now sits at the same height'
+    ],
+    fixed:[
+      'Setting up a morning and a night routine together could give tasks the same id, so ticking one task ticked another. New routines get their own ids, and saved ones are repaired when the app opens',
+      'The welcome tour no longer shows the Timeline for a split second before it opens',
+      'Get dressed and ready showed a book icon. It now shows a shirt',
+      'Edit mode showed two + Add task buttons in the same block',
+      'The Show the welcome tour button in About had its icon above the text',
+      'Colour spelling, and Edit task, now match across the app',
+      'The wake time in first-time setup now looks like the rest of the app, such as 5:00 AM',
+      'Science sheets corrected: sleep inertia can take up to an hour to clear, body temperature has already started rising by the time you wake, the food tip now describes regular meal times, and the caffeine tips now give a cutoff at least 6 hours before bed. Two new sources were added',
+    ] },
+  { v:'4.0.0', date:'Oct 2026',
+    added:[
+      'A new look for the Timeline. Task dots are glossy orbs, the lines between them are glossy tubes, and the task running now has a green ring with a wave that fills it as time passes',
+      'The Now banner shows a progress bar and a Done button',
+      'A new plus menu: a list with a short hint under each choice, and a close button',
+      'Running late? and Copy this day are now bottom sheets. Copy this day has a month calendar and quick picks for Tomorrow, Next week and In 2 weeks',
+      'The task editor is now a sheet of rows. Tap Window, Length, Starts, Kind, Repeat, Day types or Colour & icon to change it in a small sheet. Starts has a time wheel and a Fixed time switch',
+      'Colour & icon shows a live preview, orb colours and suggested icons, with Browse all icons one tap away',
+      'In the Go to date calendar, hold a day for the Away and Note menu, and swipe left or right to change month',
+      'The wake line remembers whether you left it open or closed',
+      'Appearance has a theme preview grid, orb accent colours and switches for the clock and text size. Sleep caps and window times use a time wheel',
+      'Settings pages use rows with icons. Delete and reset actions are red. About shows the Yoteii logo, the version and the status',
+      'A new Inbox. Type a task in the bar at the bottom and send it, flag it as important with the red flag first if it matters',
+      'Inbox tasks can have a note, and show when they were added',
+      'Tap the flag on any Inbox task to mark it important. Important tasks sit in their own section at the top',
+      'Counts at the top of the Inbox (waiting, important, oldest) and a number on the Inbox tab',
+      'Filter the Inbox to Important only, and sort it by Manual, Newest, Oldest or A to Z',
+      'Double-tap an Inbox task to edit it, or hold it to drag it to a new place. Dragging switches the sort to Manual',
+      'A new look for an empty Inbox',
+      'Two new pages in the welcome tour: Routines that shrink to fit (with a peek at Run mode), and See how your days add up (streaks, History and the weekly review)',
+      'A last tour page that previews the three setup choices, so Get started leads straight into setup',
+      'A Back button on the tour, tappable dots to jump to any page, and the arrow keys on a keyboard',
+      'On the tour, tap Home, School or Away and the sample blocks change to match',
+      'A new To-do composer. Type at the bottom, send it, or tap the date or the star first. It starts as the view you are in (Today, Tomorrow, a list or a tag)',
+      'A red number on the To-do tab shows how many are overdue',
+      'A new date picker with Today, Tomorrow, Next week and No date, a month grid, a time and a repeat. Tap the date on a to-do to change it fast',
+      'The calendar can shrink to one week. Tap or swipe the little bar under it',
+      'New empty states for the To-do tab: first time, a list with nothing in it, Today, Upcoming, Starred, a tag with no matches, and All caught up when everything is done',
+      'Finished to-dos are now kept in History. Ticking one off records it, a repeating to-do counts every time, and Clear done no longer erases the record. To-dos finished before this update are not counted',
+      'History can show a week, a month or all time. A calendar shades each day by how much you finished, and tapping a day opens it on the Timeline',
+      'A Review, a To-dos done list, Energy by window and Most consistent tasks that you can fold away. Energy now puts the finish rate and your rating side by side',
+      'Days are grouped by week with a percent pill, and today shows at the top while it is still in progress'
+    ],
+    changed:[
+      'Yoteii is now packaged as a standalone Android app (app.yoteii), built without GitHub. The GitHub repository, Pages site and build workflows are no longer used',
+      'Tasks show their name first with the time underneath. Check rings, the star on a to-do and the send buttons are glossy orbs',
+      'Go to date and Copy this day use a clean month grid with no routine dots. Away days have a dashed outline and notes a small dot',
+      'The app is now called Yoteii',
+      'To-do cards are tighter. The list shows as a coloured edge instead of a label, and tags sit inline. Overdue is no longer repeated on each card in the date sort',
+      'The edit to-do screen is now a tall sheet like the Inbox one: name and star, then Date, Time and Repeat, then List, Tags and Colour & icon, subtasks, note, Send to Timeline',
+      'Drag the dots on any open to-do to reorder it within its group. Sorting switches to My order when you do',
+      'Subtasks in the editor have a tick circle and a remove button. The tag filter and the list or calendar switch moved to the top right. The round + button no longer shows on the To-do tab',
+      'A new Yoteii logo: the app icon, the loading screen (now with the name under it), the browser tab icon and the Android reminder icon',
+      'The loading screen no longer shows a \"Tap to skip\" hint. Tapping it still skips once the app has loaded',
+      'The welcome tour starts with the new logo, and its orbs pop in one by one',
+      'The tour pictures use your accent colour for checks, tabs, chips, buttons and the chart',
+      'Tour headlines and text now wrap evenly instead of leaving a single word alone on a line',
+      'Add to inbox from the + menu opens a small sheet where you can add a note and a flag. The Inbox tab no longer has the round + button',
+      'Moving a to-do or a timeline task to the Inbox keeps its note, and Schedule on an Inbox task carries the note across as details',
+      'The History tab is redesigned to match the Inbox and To-do tabs: the same cards, switch, calendar header, section labels, pills and empty state',
+      'Streaks now allow one grace day. A single missed day keeps your streak if you finish 70% the next day, and you earn the next grace day after 7 more good days. A day with no record counts as a miss, and today never does while it is in progress',
+      'Deleting a day\'s record shows the date as Wednesday, October 21 instead of 2026-10-21',
+      'The app files are reorganised behind the scenes. Nothing looks or works differently'
+    ]
+  },
   { v:'3.1.3', date:'Oct 2026',
     added:[
       'Six themes to pick from in Settings: Dark, Light, Midnight (true black), Slate, Forest and Warm paper, plus Match device',
@@ -81,7 +187,7 @@ export const CHANGELOG = [
       'A To-do tab between Inbox and Timeline: a plain checklist you can tick off, edit, delete and clear when done',
       'A short welcome tour for new users, and again after the app is reset or its data is cleared. You can replay it from About',
       'Subtasks in the editor are now rows: add one at a time, drag the handle to reorder, remove with the cross, and see how many you have',
-      'Credit to Structured, the app that inspired Yotei, in About, Settings and the welcome tour'
+      'Credit to Structured, the app that inspired Yoteii, in About, Settings and the welcome tour'
     ],
     changed:[
       'Inbox looks like the original: a small icon, a short title and one New Inbox Task button',
@@ -112,7 +218,7 @@ export const CHANGELOG = [
       'Tasks whose end date has passed vanish from the timeline, so Settings, Schedule now has a Tasks with dates list where you can edit or remove them'] },
   { v:'3.0.3', date:'Oct 2026',
     added:[
-      'Loading screen: the five dots from the app icon ripple while Yotei starts (at least 2 seconds in the Android app)',
+      'Loading screen: the five dots from the app icon ripple while Yoteii starts (at least 2 seconds in the Android app)',
       'Choose dates for a task: when you add or change a task, pick a start and an end date under "Or choose dates". Weekdays you picked still apply',
       'Done button in the header while editing is on, so you can leave editing mode without going to Settings',
       'Energy buttons now have a colour per level (red for drained to green for great), a label, and today\'s rating is filled in'],
@@ -130,8 +236,8 @@ export const CHANGELOG = [
       'Android app: real reminders. They are scheduled with the phone for today and the next two days, fire when the app is closed, and survive a restart. Choose at start, 5 or 10 minutes before',
       'Poppins is now built in, so the app looks the same offline and no longer contacts Google Fonts'],
     changed:[
-      'Questions and messages (delete, replace, import, reset and so on) now appear in Yotei\'s own dialogs instead of the browser popups. Delete and replace buttons are red, Cancel is highlighted for questions, and the Android back button or Esc cancels',
-      'If Yotei crashes or a file fails to load, a short message now appears instead of the red technical box. Export my data saves a backup even when the app did not start, Reload tries again, and Details shows the technical text',
+      'Questions and messages (delete, replace, import, reset and so on) now appear in Yoteii\'s own dialogs instead of the browser popups. Delete and replace buttons are red, Cancel is highlighted for questions, and the Android back button or Esc cancels',
+      'If Yoteii crashes or a file fails to load, a short message now appears instead of the red technical box. Export my data saves a backup even when the app did not start, Reload tries again, and Details shows the technical text',
       'In the app, messages say "on this device" instead of "in this browser"',
       'Spare time before a school departure now shows as free time, with the message "15 min free before you leave", instead of a Buffer time task you could not delete'],
     fixed:[
@@ -145,7 +251,7 @@ export const CHANGELOG = [
     added:[
       'Day types: add a task to Home, School, Away, any two or all three. Linked copies stay in step when you edit one',
       'Free time shows as a dashed gap with a + Add task button before, between and after tasks, and in blocks with nothing in them',
-      'Set an End time first and Yotei works out the Start from the task length',
+      'Set an End time first and Yoteii works out the Start from the task length',
       'A snapshot of your data is kept once a day and before every import (the last 7). Settings, Backup, Snapshots restores one',
       'If the app ever fails to start, a red box names what went wrong'],
     changed:[
