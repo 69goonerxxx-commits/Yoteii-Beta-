@@ -1,6 +1,6 @@
 name: Android APK
 
-# Builds the Yotei Android app and attaches the APK to a GitHub release.
+# Builds the Yoteii Android app and attaches the APK to a GitHub release.
 # Run it from the Actions tab (Run workflow), or push a tag like v3.1.0.
 on:
   workflow_dispatch:
@@ -33,13 +33,13 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Collect the web files
-        run: node build-www.mjs
+        run: node scripts/build-www.mjs
 
       - name: Create the Android project
         run: npx cap add android
 
       - name: Set version and icons
-        run: node android-prepare.mjs
+        run: node scripts/android-prepare.mjs
         env:
           BUILD_NUMBER: ${{ github.run_number }}
 
@@ -66,31 +66,31 @@ jobs:
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           echo "$KEYSTORE_B64" | base64 -d > yotei-release.p12
           "$BT/zipalign" -f -p 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
-          "$BT/apksigner" sign --ks yotei-release.p12 --ks-key-alias yotei --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out "Yotei-$VERSION.apk" aligned.apk
-          "$BT/apksigner" verify --print-certs "Yotei-$VERSION.apk"
+          "$BT/apksigner" sign --ks yotei-release.p12 --ks-key-alias yotei --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out "Yoteii-$VERSION.apk" aligned.apk
+          "$BT/apksigner" verify --print-certs "Yoteii-$VERSION.apk"
           rm -f yotei-release.p12 aligned.apk
-          echo "APK_PATH=Yotei-$VERSION.apk" >> "$GITHUB_ENV"
+          echo "APK_PATH=Yoteii-$VERSION.apk" >> "$GITHUB_ENV"
           echo "Signed with your key: new builds install over the old one and keep your data." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Use the debug-signed APK
         if: env.KEYSTORE_B64 == ''
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          cp android/app/build/outputs/apk/debug/app-debug.apk "Yotei-$VERSION-debug.apk"
-          echo "APK_PATH=Yotei-$VERSION-debug.apk" >> "$GITHUB_ENV"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "Yoteii-$VERSION-debug.apk"
+          echo "APK_PATH=Yoteii-$VERSION-debug.apk" >> "$GITHUB_ENV"
           echo "No signing key set, so this is a debug build. A later build will NOT install over it (uninstall first)." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Keep a copy with the run
         uses: actions/upload-artifact@v4
         with:
-          name: Yotei-apk
+          name: Yoteii-apk
           path: ${{ env.APK_PATH }}
 
       - name: Publish on the Releases page
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('build-{0}', github.run_number) }}
-          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Yotei build {0}', github.run_number) }}
+          name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || format('Yoteii build {0}', github.run_number) }}
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/') }}
           body: Open this page on your Android phone and tap the .apk file to install it.
           files: ${{ env.APK_PATH }}
