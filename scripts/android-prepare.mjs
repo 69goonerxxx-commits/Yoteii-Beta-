@@ -2,6 +2,7 @@
 // and (later) any manifest changes. Every step reports what it did, and warns instead of failing
 // if the generated project looks different from what is expected.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { addGooglePlugin } from './google-plugin.mjs';
 
 const APP = 'android/app/src/main';
 const warn = m => console.warn('WARNING: ' + m);
@@ -199,6 +200,9 @@ public class MainActivity extends BridgeActivity {
     }
   }
 }
+
+// ---- Google sign-in and Drive backup (a small plugin, YoteiGoogle) ----
+addGooglePlugin({ warn });
 
 // ---- small icon for reminder notifications: Android wants a white shape on a transparent background ----
 {
