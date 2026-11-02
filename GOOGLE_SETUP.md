@@ -15,7 +15,7 @@ The backup goes in Drive's private "app data" folder. Only Yoteii can read it, a
    - Audience: add your own Google account as a test user.
 5. Menu, APIs and services, **Credentials**, Create credentials, **OAuth client ID**.
    - Application type: **Android**.
-   - Package name: `app.yotei`
+   - Package name: `app.yoteii`
    - SHA-1 certificate fingerprint: `85:C3:C3:22:0E:58:5F:76:63:F3:EE:5A:4F:2C:03:04:11:31:39:69` (this is the fingerprint of yoteii-release.p12)
    - Press Create. There is nothing to copy into the app: Google matches the app by its package name and signature.
 6. When it works for you, go back to the OAuth consent screen and press **Publish app** (In production). The scope Yoteii asks for is not a sensitive one, so no review is needed. While the app stays in Testing, Google ends the sign-in after 7 days and people have to sign in again.
