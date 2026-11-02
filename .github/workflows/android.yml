@@ -66,7 +66,11 @@ jobs:
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           echo "$KEYSTORE_B64" | base64 -d > yotei-release.p12
           "$BT/zipalign" -f -p 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
-          "$BT/apksigner" sign --ks yotei-release.p12 --ks-key-alias yotei --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out "Yoteii-$VERSION.apk" aligned.apk
+          # The key's name inside the file is read from the file, so it works whichever name it was created with (yotei or yoteii).
+          ALIAS=$(keytool -list -keystore yotei-release.p12 -storetype PKCS12 -storepass "$KEYSTORE_PASSWORD" 2>/dev/null | grep -i "PrivateKeyEntry" | head -1 | cut -d, -f1)
+          [ -n "$ALIAS" ] || ALIAS=yotei
+          echo "Signing with key name: $ALIAS"
+          "$BT/apksigner" sign --ks yotei-release.p12 --ks-key-alias "$ALIAS" --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD --out "Yoteii-$VERSION.apk" aligned.apk
           "$BT/apksigner" verify --print-certs "Yoteii-$VERSION.apk"
           rm -f yotei-release.p12 aligned.apk
           echo "APK_PATH=Yoteii-$VERSION.apk" >> "$GITHUB_ENV"
