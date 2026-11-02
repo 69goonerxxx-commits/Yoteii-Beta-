@@ -1850,3 +1850,28 @@ html[data-theme=light] .setPage .rowBtn.rowRed{color:#dc2626!important}
 
 #setupDlg .suTW,#setupDlg .suTW .suT{width:100%}
 #setupDlg .suTypes>.add{width:100%}
+
+/* ---- Google sign-in ---- */
+#setupDlg .suOk.suGoogle{background:#fff;color:#1f1f1f;display:flex;align-items:center;justify-content:center;gap:12px}
+#setupDlg .suNote{margin:6px 0 0;max-width:300px;color:var(--sec);font-size:12.5px;line-height:1.5;text-align:center}
+#setupDlg .suFound{justify-content:flex-start;padding-top:8px}
+#setupDlg .suFound p{max-width:none}
+#setupDlg .suCard{width:100%;background:var(--card);border-radius:14px;padding:4px 16px;text-align:left}
+#setupDlg .suKv{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:11px 0;font-size:14px;border-bottom:1px solid var(--line)}
+#setupDlg .suKv:last-child{border:0}
+#setupDlg .suKv span{color:var(--sec)}#setupDlg .suKv b{font-weight:600;text-align:right}
+#setupDlg .suBad{width:84px;height:84px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--text)}
+#setupDlg .suBad svg{width:34px;height:34px}
+.gdWho{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.gdWho small{display:block;color:var(--sec);font-size:12.5px}
+.gdAv{width:42px;height:42px;border-radius:50%;background:var(--accent);color:var(--onacc,#fff);display:flex;align-items:center;justify-content:center;font:700 17px 'Poppins',sans-serif;flex:none}
+
+#tab-settings #gdBox{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+#tab-settings #gdBox .wn{margin:0}
+#tab-settings #gdBox .ea{display:flex;flex-wrap:wrap;gap:8px}
+#setupDlg .suFound{padding-top:28px;gap:8px}
+#setupDlg .suFound .suLogoSvg{width:118px}
+#setupDlg .suFound h1{font-size:30px}
+
+#tab-settings #gdBox .gdWho{justify-content:flex-start;text-align:left}
+#tab-settings #gdBox .gdWho>span:last-child{text-align:left}
