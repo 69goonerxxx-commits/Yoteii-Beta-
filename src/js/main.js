@@ -20,6 +20,7 @@ import { analyze as rhyAnalyze, suggest as rhySuggest, curve as rhyCurve, clean 
 import { startWaves } from './wave.js';
 import { initEdUI } from './edui.js';
 import { planTypes, ownNameError, sleepRangeFor } from './setupplan.js';
+import { createDrive, summarizeBackup, shouldAutoBackup } from './gdrive.js';
 let EDUI = null;
 // ============================================================
 // YOTEI — script map (search for the header text to jump)
@@ -1376,7 +1377,8 @@ $('#msgDlg').addEventListener('close', () => { const r = mdResolve; mdResolve = 
 // IMPORT / EXPORT / RESET
 // ============================================================
 // Backup files keep the v2 layout (keys carry the yotei_v2_ prefix), so they stay readable by older versions.
-function backupData(){ const o = {}; Object.entries(store.dump()).forEach(([k, v]) => { o['yotei_v2_' + k] = v; }); return o; }
+const NO_BACKUP = ['gAcct', 'gDrive'];      // which Google account this phone is signed in to is not part of a backup
+function backupData(){ const o = {}; Object.entries(store.dump()).forEach(([k, v]) => { if (!NO_BACKUP.includes(k)) o['yotei_v2_' + k] = v; }); return o; }
 // In the Android app a page cannot download a file by itself. Export saves straight into Downloads/Yotei through a small piece of
 // native code (YoteiFiles). Share keeps using Android's share sheet. If the native part is missing, Export falls back to the share sheet.
 async function shareBackupNative(name, json){
@@ -1430,6 +1432,23 @@ async function exportData(){
   document.body.appendChild(a); a.click(); a.remove(); store.set('lastBackup', Date.now()); updateBackupInfo();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
+// Replaces everything with a backup that has already been checked with validateBackup. Reloads the app when it works.
+// extra: keys (name -> value) to set afterwards, for example { setup:true } when restoring on a fresh install.
+async function replaceFromBackup(j, extra = {}){
+  const P = 'yotei_v2_', old = store.dump(); let data = {};
+  Object.keys(j.data).forEach(k => { data[k.slice(P.length)] = j.data[k]; });
+  if (needsDateMigration(data)) data = migrateDates(data);   // backups from v2 use the old day format
+  NO_BACKUP.forEach(k => { const keep = store.raw(k); if (keep !== null) data[k] = keep; else delete data[k]; });   // stay signed in to Google
+  Object.entries(extra).forEach(([k, v]) => { data[k] = JSON.stringify(v); });
+  try{ await makeSnapshot('before-import'); }catch{}
+  try{ await replaceAll(data); }
+  catch{
+    try{ await replaceAll(old); }catch{}
+    tell('Import failed, possibly because storage is full. Your previous data was restored.');
+    return false;
+  }
+  location.reload(); return true;
+}
 function importData(file){
   if (file.size > 8 * 1024 * 1024){ tell('That file is too large to be a Yoteii backup. Nothing was changed.'); return; }
   const r = new FileReader();
@@ -1440,22 +1459,89 @@ function importData(file){
     const chk = validateBackup(j, P);
     if (!chk.ok){ tell('That file can\'t be used as a Yoteii backup because ' + chk.why + '. Nothing was changed.'); return; }
     if (!await ask('Replace everything in Yoteii with this backup?', { ok:'Replace', danger:true })) return;
-    const old = store.dump(); let data = {};
-    Object.keys(j.data).forEach(k => { data[k.slice(P.length)] = j.data[k]; });
-    if (needsDateMigration(data)) data = migrateDates(data);   // backups from v2 use the old day format
-    try{ await makeSnapshot('before-import'); }catch{}
-    try{ await replaceAll(data); }
-    catch{
-      try{ await replaceAll(old); }catch{}
-      tell('Import failed, possibly because storage is full. Your previous data was restored.');
-      return;
-    }
-    location.reload();
+    await replaceFromBackup(j);
   };
   r.readAsText(file);
 }
 $('#rst').addEventListener('click', async () => { if (await ask('Remove every routine task and reset all block names, colors and times? Your history is kept. You can undo this right after.', { ok:'Reset', danger:true })){ const snap = grab(); ['blocks', 'wins', 'ovr', 'wovr'].forEach(k => store.remove(k)); render(); showUndo('Routine reset', snap); } });
 $('#exp').onclick = exportData;
+// ---- Google Drive backup (the Android app): sign in with Google, then one backup file in a private Drive folder ----
+const GD = createDrive({ getPlugin:() => nativePlugin('YoteiGoogle') });
+const G_SVG = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';   // Google's own "G" mark
+const gdAvailable = () => !!nativePlugin('YoteiGoogle');
+const gdAcct = () => store.get('gAcct', null);
+const gdState = () => ({ on:true, last:0, err:'', ...(store.get('gDrive', {}) || {}) });
+const gdSet = patch => store.set('gDrive', { ...gdState(), ...patch });
+const gdWhen = t => new Date(t).toLocaleString(undefined, { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+function gdErrText(e){
+  switch (e && e.code){
+    case 'cancelled': return 'Sign-in was cancelled.';
+    case 'network': return 'No connection. Check your internet and try again.';
+    case 'notsetup': return 'Google sign-in is not set up for this app yet. The Google Cloud settings have to match the app\'s signing key.';
+    case 'denied': return 'Google Drive refused the request. Check that the Google Drive API is turned on for the project.';
+    case 'auth': return 'Google needs you to sign in again.';
+    default: return 'Something went wrong with Google. Please try again.';
+  }
+}
+async function gdSignIn(){
+  const r = await GD.signIn(true);
+  store.set('gAcct', { email:r.email, name:r.name, given:r.given });
+  if (store.get('gDrive', null) === null) store.set('gDrive', { on:true, last:0, err:'' });
+  return r;
+}
+async function gdBackupNow(opts = {}){
+  const tk = await GD.token(!!opts.interactive), f = await GD.findBackup(tk);
+  await GD.upload(tk, backupJson(), f && f.id);
+  gdSet({ last:Date.now(), err:'' }); store.set('lastBackup', Date.now()); updateBackupInfo();
+}
+const hasUserData = () => !!store.get('blocks', null) || Object.keys(store.get('hist', {})).length > 0 || Object.keys(store.get('plans', {})).length > 0;
+async function gdAutoMaybe(){
+  if (!gdAvailable() || !gdAcct()) return;
+  const g = gdState(); if (!shouldAutoBackup({ signedIn:true, on:g.on, last:g.last, now:Date.now(), hasData:hasUserData() })) return;
+  try{ await gdBackupNow({ interactive:false }); }catch(e){ gdSet({ err:(e && e.code) || 'api' }); }
+  gdDraw();
+}
+async function gdRestore(){
+  const tk = await GD.token(true), f = await GD.findBackup(tk);
+  if (!f){ tell('No backup was found in your Google Drive yet.'); return; }
+  let j = null; try{ j = JSON.parse(await GD.download(tk, f.id)); }catch{}
+  const chk = validateBackup(j, 'yotei_v2_');
+  if (!chk.ok){ tell('That backup can\'t be used because ' + chk.why + '. Nothing was changed.'); return; }
+  if (!await ask('Replace everything in Yoteii with the backup from ' + gdWhen(f.modifiedTime) + '? Your current data is saved as a snapshot first.', { ok:'Replace', danger:true })) return;
+  await replaceFromBackup(j);
+}
+function gdDraw(){
+  const box = $('#gdBox'); if (!box) return;
+  if (!gdAvailable()){ box.innerHTML = '<p class="wn">' + (IS_NATIVE ? 'Google sign-in is not available in this build of the app.' : 'Google Drive backup works in the Android app.') + '</p>'; return; }
+  const a = gdAcct(), g = gdState();
+  if (!a){ box.innerHTML = '<p class="wn">Sign in with Google to keep a copy of your Yoteii data in your own Google Drive. It goes in a private folder that only Yoteii can read, and nothing else in your Drive is touched.</p><div class="ea"><button id="gdIn" type="button">Sign in with Google</button></div>'; return; }
+  const who = a.name || a.email;
+  box.innerHTML = '<div class="gdWho"><span class="gdAv">' + esc((who || '?').charAt(0).toUpperCase()) + '</span><span><b>' + esc(who) + '</b><small>' + esc(a.email || '') + '</small></span></div>' +
+    '<p class="wn">' + (g.last ? 'Last backup ' + gdWhen(g.last) : 'Not backed up yet') + '.' + (g.err ? ' ' + gdErrText({ code:g.err }) : '') + '</p>' +
+    '<p class="wn">' + (g.on ? 'Automatic backup is on: Yoteii saves a copy to Drive about once a day, when you open it.' : 'Automatic backup is off.') + '</p>' +
+    '<div class="ea"><button id="gdNow" type="button">Back up now</button><button id="gdRestore" type="button">Restore</button><button id="gdAuto" type="button">' + (g.on ? 'Turn off automatic backup' : 'Turn on automatic backup') + '</button><button id="gdOut" type="button" class="danger">Sign out</button></div>';
+}
+async function gdBusy(btn, fn){
+  const was = btn.textContent; btn.disabled = true; btn.textContent = 'Working...';
+  try{ await fn(); }catch(e){ if (!e || e.code !== 'cancelled') tell(gdErrText(e)); }
+  finally{ btn.disabled = false; btn.textContent = was; gdDraw(); }
+}
+$('#tab-settings').insertAdjacentHTML('beforeend', '<div class="sleep"><h2>Google Drive</h2><div id="gdBox"></div></div>');
+$('#gdBox').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'gdIn') gdBusy(b, async () => {
+    const r = await gdSignIn(), f = await GD.findBackup(r.token);
+    if (f) tell('You are signed in as ' + r.email + '. A backup from ' + gdWhen(f.modifiedTime) + ' is already in your Drive. Tap Restore to use it, or Back up now to replace it with this phone\'s data.');
+    else { await gdBackupNow({ interactive:false }); toast('Signed in. Your first backup is saved.'); }
+  });
+  if (b.id === 'gdNow') gdBusy(b, async () => { await gdBackupNow({ interactive:true }); toast('Backed up to Google Drive'); });
+  if (b.id === 'gdRestore') gdBusy(b, gdRestore);
+  if (b.id === 'gdAuto') { gdSet({ on:!gdState().on }); gdDraw(); if (gdState().on) gdAutoMaybe(); }
+  if (b.id === 'gdOut') ask('Sign out of Google? Automatic backups stop until you sign in again. The backup already in your Drive stays there.', { ok:'Sign out' }).then(ok => { if (ok){ store.remove('gAcct'); store.remove('gDrive'); gdDraw(); } });
+});
+gdDraw();
+if (IS_NATIVE) setTimeout(gdAutoMaybe, 6000);
+
 async function openSnaps(){
   const why = { daily:'Daily', 'before-import':'Before an import', 'before-restore':'Before a restore', 'before-upgrade':'Before the update' };
   let L = []; try{ L = await listSnapshots(); }catch{}
@@ -2783,9 +2869,9 @@ let SU = {};
 function suReset(){ SU = { step:0, sex:'', order:[], own:null, days:[1, 2, 3, 4, 5], rem:true, nud:true }; }
 suReset();
 // The logo from the tour, copied with its own ids so its gradients still work while the tour is closed.
-function suLogo(){
+function suLogo(sfx = '_su'){
   const src = document.querySelector('#welDlg .wlLogo'); if (!src) return '';
-  return src.outerHTML.replace('class="wlLogo"', 'class="suLogoSvg"').replace(/id="([^"]+)"/g, 'id="$1_su"').replace(/url\(#([^)]+)\)/g, 'url(#$1_su)').replace(/href="#([^"]+)"/g, 'href="#$1_su"');
+  return src.outerHTML.replace('class="wlLogo"', 'class="suLogoSvg"').replace(/id="([^"]+)"/g, 'id="$1' + sfx + '"').replace(/url\(#([^)]+)\)/g, 'url(#$1' + sfx + ')').replace(/href="#([^"]+)"/g, 'href="#$1' + sfx + '"');
 }
 function setupPick(l, n){
   const [box, sel, pv] = SU_LISTS[l]; $(sel).value = n;
@@ -2929,8 +3015,11 @@ function suShow(n){
   document.querySelectorAll('#setupDlg .suStep').forEach(x => { x.hidden = Number(x.dataset.s) !== n; });
   const mid = n >= 1 && n <= SU_N; $('#su_top').hidden = !mid;
   if (mid){ $('#su_stepTxt').textContent = 'Step ' + n + ' of ' + SU_N; $('#su_bar').style.width = (n / SU_N * 100) + '%'; }
-  $('#su_ok').textContent = n === 0 ? 'Get started' : n < SU_N ? 'Continue' : n === SU_N ? (SU.rem || SU.nud ? 'Turn on and finish' : 'Finish') : 'Take the welcome tour';
-  $('#su_skip').textContent = n === 0 ? 'Skip setup' : n === SU_DONE ? 'Skip the tour' : 'Back';
+  const g = gdAvailable(), ok = $('#su_ok');
+  ok.classList.toggle('suGoogle', n === 0 && g); $('#su_gNote').hidden = !(n === 0 && g);
+  const label = n === 0 ? (g ? 'Continue with Google' : 'Get started') : n === 7 ? 'Restore this backup' : n === 8 ? 'Try again' : n < SU_N ? 'Continue' : n === SU_N ? (SU.rem || SU.nud ? 'Turn on and finish' : 'Finish') : 'Take the welcome tour';
+  if (n === 0 && g) ok.innerHTML = G_SVG + '<span>' + label + '</span>'; else ok.textContent = label;
+  $('#su_skip').textContent = n === 0 ? (g ? 'Continue without an account' : 'Skip setup') : n === 7 ? 'Start fresh' : n === 8 ? 'Continue without an account' : n === SU_DONE ? 'Skip the tour' : 'Back';
   if (n === 2) suPreview(); if (n === 3) drawSuTypes(); if (n === 4) suBedHint();
   $('#su_body').scrollTop = 0;
 }
@@ -2938,7 +3027,7 @@ function openSetup(){
   suReset();
   const opt = l => '<option value="">Start empty</option>' + Object.keys(TPL[l].sets).map(n => '<option>' + n + '</option>').join('');
   $('#su_pre').innerHTML = opt('pre'); $('#su_night').innerHTML = opt('night');
-  $('#su_logo').innerHTML = suLogo();
+  $('#su_logo').innerHTML = suLogo(); $('#su_logo7').innerHTML = suLogo('_su7'); $('#su_bad').innerHTML = ICONS.cloud || '';
   $('#su_bed').value = capsOn() ? toVal(CAP.hard) : ''; suBedHint();
   [...$('#su_sex').children].forEach(x => x.classList.remove('on')); $('#su_remB').setAttribute('aria-checked', 'true'); $('#su_nudB').setAttribute('aria-checked', 'true');
   $('#su_icRem').innerHTML = ICONS.bell; $('#su_icNud').innerHTML = ICONS.heartbeat;
@@ -2974,15 +3063,54 @@ async function suFinish(){
       if (IS_NATIVE){ try{ await remNativeState(); remSoon(true); }catch{} } else if ($('#remCard')) $('#remCard').innerHTML = remCard();
       if (!ok) toast('Notifications are off. You can turn them on in Settings, Reminders.');
     }
+    if (gdAcct() && gdState().on){ try{ await gdBackupNow({ interactive:false }); }catch(e){ gdSet({ err:(e && e.code) || 'api' }); } }      // the first Google Drive backup
   }finally{ $('#su_ok').disabled = false; }
   store.set('setup', true); store.set('capsNote', true); goDate(todayStr()); drawProfile(); suShow(SU_DONE);
+}
+function suFillFound(){
+  const f = SU.found, sm = summarizeBackup(f.j), kv = (k, v) => '<div class="suKv"><span>' + k + '</span><b>' + esc(v) + '</b></div>';
+  $('#su_foundWho').textContent = 'Signed in as ' + f.email;
+  $('#su_foundCard').innerHTML = kv('Saved', gdWhen(f.file.modifiedTime)) + kv('History', sm.days + (sm.days === 1 ? ' day' : ' days')) + kv('Includes', 'Tasks, routines, day types and settings');
+}
+async function suGoogleStart(){
+  const ok = $('#su_ok'), sk = $('#su_skip'); ok.disabled = sk.disabled = true; SU.found = null;
+  try{
+    const r = await gdSignIn();
+    if (!$('#su_name').value && r.given) $('#su_name').value = r.given;
+    const f = await GD.findBackup(r.token);
+    if (f){
+      let j = null; try{ j = JSON.parse(await GD.download(r.token, f.id)); }catch{}
+      if (validateBackup(j, 'yotei_v2_').ok){ SU.found = { j, file:f, email:r.email }; suFillFound(); suShow(7); return; }
+    }
+    suShow(1);
+  }catch(e){ $('#su_errT').textContent = gdErrText(e); suShow(8); }
+  finally{ ok.disabled = sk.disabled = false; }
+}
+async function suRestoreFound(){
+  if (!SU.found) return suShow(1);
+  $('#su_ok').disabled = true;
+  try{ await replaceFromBackup(SU.found.j, { setup:true, welcomed:true, capsNote:true }); }finally{ $('#su_ok').disabled = false; }
 }
 function suEnd(tour){
   store.set('setup', true); store.set('capsNote', true); if (!tour) store.set('welcomed', true);
   $('#setupDlg').close(); goDate(todayStr()); drawProfile(); if (tour) openWelcome(true);
 }
-$('#su_ok').onclick = () => { if (SU.step < SU_N) suShow(SU.step + 1); else if (SU.step === SU_N) suFinish(); else suEnd(true); };
-$('#su_skip').onclick = () => { if (SU.step === 0){ store.set('setup', true); store.set('capsNote', true); suShow(SU_DONE); } else if (SU.step === SU_DONE) suEnd(false); else suShow(SU.step - 1); };
+$('#su_ok').onclick = () => {
+  const n = SU.step;
+  if (n === 0){ if (gdAvailable()) suGoogleStart(); else suShow(1); }
+  else if (n === 7) suRestoreFound();
+  else if (n === 8) suGoogleStart();
+  else if (n < SU_N) suShow(n + 1);
+  else if (n === SU_N) suFinish();
+  else suEnd(true);
+};
+$('#su_skip').onclick = () => {
+  const n = SU.step;
+  if (n === 0){ if (gdAvailable()) suShow(1); else { store.set('setup', true); store.set('capsNote', true); suShow(SU_DONE); } }
+  else if (n === 7 || n === 8) suShow(1);
+  else if (n === SU_DONE) suEnd(false);
+  else suShow(n - 1);
+};
 
 // ---- Settings, Profile ----
 const PF_SEX = [['m', 'Male'], ['f', 'Female'], ['n', 'Prefer not to say']];
@@ -3816,13 +3944,14 @@ const SI = {
 const sIcon = (k, extra = '') => '<svg viewBox="0 0 24 24" aria-hidden="true"' + extra + '>' + SI[k] + '</svg>';
 const SET_MENU = [
   { label:'General', rows:[
-    { id:'prof',  t:'Profile',    ic:'user',    col:'#8478d0', cards:['Profile'] },
+    { id:'prof',  t:'Profile',    pi:'user',    col:'#8478d0', cards:['Profile'] },
     { id:'rem',   t:'Reminders',  ic:'bell',    col:'#5fae6b', cards:['Reminders'] },
     { id:'look',  t:'Appearance', ic:'palette', col:'#8fb85a', cards:['Appearance'] },
     { id:'sched', t:'Schedule',   ic:'sliders', col:'#5b8bb8', cards:['Sleep caps', 'Leave time', 'Energy rhythm', 'Usual days', 'Day types', 'Routine templates', 'Tasks with dates'] },
     { id:'edit',  t:'Editing',    ic:'pencil',  col:'#e0a03a', cards:['Editing'] }] },
   { label:'Data', rows:[
     { id:'bk',    t:'Backup',          ic:'save',  col:'#e0787f', cards:['Backup'] },
+    { id:'gd',    t:'Google Drive', pi:'cloud', col:'#4a8fe0', cards:['Google Drive'] },
     { id:'cal',   t:'Calendar import', ic:'cal',   col:'#5fae6b', cards:['Calendar import'] },
     { id:'hist',  t:'History data',    ic:'clock', col:'#5b8bb8', cards:['History data'] },
     { id:'reset', t:'Reset',           ic:'reset', col:'#d9606a', cards:['Reset'] }] },
@@ -3835,6 +3964,7 @@ function settingsValue(id){
   if (id === 'look'){ const s = $('#thSel'); return s ? s.selectedOptions[0].textContent : ''; }
   if (id === 'edit') return editing ? 'On' : 'Off';
   if (id === 'bk'){ const t = store.get('lastBackup', 0); return t ? (Date.now() - t < 864e5 ? 'Today' : new Date(t).toLocaleDateString(undefined, { month:'short', day:'numeric' })) : 'Never'; }
+  if (id === 'gd'){ if (!gdAvailable()) return IS_NATIVE ? 'Unavailable' : 'Android app'; const a = gdAcct(); return a ? (a.email || 'On') : 'Off'; }
   if (id === 'prof'){ const P = store.get('profile', {}) || {}; return P.name || ''; }
   if (id === 'about') return 'v' + APP_VERSION;
   return '';
@@ -3855,7 +3985,7 @@ function buildSettings(){
     menu.insertAdjacentHTML('beforeend', '<p class="setLbl">' + g.label + '</p>');
     const box = document.createElement('div'); box.className = 'setGroup';
     g.rows.forEach(r => {
-      box.insertAdjacentHTML('beforeend', '<button type="button" class="setRow" data-page="' + r.id + '"><span class="setIc" style="background:' + r.col + '">' + (r.ic === 'user' ? ICONS.user : sIcon(r.ic)) + '</span><span class="setT">' + r.t + '</span><span class="setV"></span>' + sIcon('chev', ' class="setChev"') + '</button>');
+      box.insertAdjacentHTML('beforeend', '<button type="button" class="setRow" data-page="' + r.id + '"><span class="setIc" style="background:' + r.col + '">' + (r.pi ? ICONS[r.pi] : sIcon(r.ic)) + '</span><span class="setT">' + r.t + '</span><span class="setV"></span>' + sIcon('chev', ' class="setChev"') + '</button>');
       const cards = r.cards.map(find).filter(Boolean);
       const pg = document.createElement('div'); pg.className = 'setPage'; pg.dataset.page = r.id; pg.dataset.n = cards.length; pg.hidden = true;
       pg.insertAdjacentHTML('beforeend', '<div class="setHead"><button type="button" class="setBack" aria-label="Back to Settings">' + sIcon('back') + '</button><h2>' + r.t + '</h2></div>');

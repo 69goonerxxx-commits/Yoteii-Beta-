@@ -34,7 +34,10 @@ export const CHANGELOG = [
       'Day types: Home plus up to two more. Pick Work or School for the days you head out, Sick, or your own with a name and an icon. Nothing is picked for you, and Away makes room when you pick two',
       'You choose the weekdays you usually head out and the time you leave',
       'Day types you make yourself can have an icon, in setup and in Settings, Day types',
-      'Task reminders and energy check-ins can be turned on at the end of setup'
+      'Task reminders and energy check-ins can be turned on at the end of setup',
+      'Sign in with Google (Android app). The welcome screen offers Continue with Google or Continue without an account',
+      'Back up to your own Google Drive, in a private folder only Yoteii can read. It runs about once a day when you open the app, and Settings, Google Drive has Back up now, Restore and Sign out',
+      'On a new phone, signing in finds your backup and offers to restore it, which skips setup'
     ],
     changed:[
       'The welcome tour now comes after setup, and its last page shows what you chose',
