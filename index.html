@@ -454,7 +454,7 @@
   <div class="suTop" id="su_top" hidden><span id="su_stepTxt">Step 1 of 5</span><div class="suBar"><i id="su_bar"></i></div></div>
   <div class="suBody" id="su_body">
 
-    <div class="suStep suHero" data-s="0"><div class="suLogo" id="su_logo"></div><h1>Yoteii</h1><p>Your day, planned around when you wake up.</p></div>
+    <div class="suStep suHero" data-s="0"><div class="suLogo" id="su_logo"></div><h1>Yoteii</h1><p>Your day, planned around when you wake up.</p><p class="suNote" id="su_gNote" hidden>Signing in backs up your days to your own private Google Drive. You can also turn it on later in Settings.</p></div>
 
     <div class="suStep" data-s="1" hidden>
       <div><h2>Nice to meet you</h2><p class="suSub" style="margin-top:4px">A few details so Yoteii can set sensible sleep and energy defaults. They stay on your device.</p></div>
@@ -501,6 +501,10 @@
     </div>
 
     <div class="suStep suHero" data-s="6" hidden><div class="suDone" aria-hidden="true"></div><h1>You are all set</h1><p>Want a quick tour of how Yoteii works? It takes about a minute, and you can replay it any time from Settings, About.</p></div>
+
+    <div class="suStep suHero suFound" data-s="7" hidden><div class="suLogo" id="su_logo7"></div><h1>We found a backup</h1><p id="su_foundWho"></p><div class="suCard" id="su_foundCard"></div><p class="suNote">Restoring skips setup and takes you straight to your timeline. Starting fresh leaves the backup in Drive until your next backup replaces it.</p></div>
+
+    <div class="suStep suHero" data-s="8" hidden><div class="suBad" id="su_bad"></div><h1>Could not sign in</h1><p id="su_errT"></p><p class="suNote">You can keep going without an account and sign in later from Settings.</p></div>
 
   </div>
   <div class="suFoot"><button id="su_ok" class="suOk">Get started</button><button id="su_skip" class="suGhost">Skip setup</button></div>
